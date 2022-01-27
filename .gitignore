@@ -1,0 +1,6 @@
+.idea
+/vendor
+composer.lock
+/var
+/.phpunit.cache
+/coverage

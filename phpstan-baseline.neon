@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Property ApiClientBundle\\\\Model\\\\GenericErrorResponse\\:\\:\\$rawContent is never written, only read\\.$#"
+			count: 1
+			path: src/Model/GenericErrorResponse.php
+

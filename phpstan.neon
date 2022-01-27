@@ -1,0 +1,57 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - phpstan-baseline.neon
+rules:
+    - PHPStan\Rules\DisallowedConstructs\DisallowedImplicitArrayCreationRule
+    - PHPStan\Rules\ForeachLoop\OverwriteVariablesWithForeachRule
+    - PHPStan\Rules\Methods\WrongCaseOfInheritedMethodRule
+    - PHPStan\Rules\Operators\OperandInArithmeticPostDecrementRule
+    - PHPStan\Rules\Operators\OperandInArithmeticPostIncrementRule
+    - PHPStan\Rules\Operators\OperandInArithmeticPreDecrementRule
+    - PHPStan\Rules\Operators\OperandInArithmeticPreIncrementRule
+    - PHPStan\Rules\Operators\OperandsInArithmeticAdditionRule
+    - PHPStan\Rules\Operators\OperandsInArithmeticDivisionRule
+    - PHPStan\Rules\Operators\OperandsInArithmeticExponentiationRule
+    - PHPStan\Rules\Operators\OperandsInArithmeticModuloRule
+    - PHPStan\Rules\Operators\OperandsInArithmeticMultiplicationRule
+    - PHPStan\Rules\Operators\OperandsInArithmeticSubtractionRule
+    - PHPStan\Rules\StrictCalls\DynamicCallOnStaticMethodsRule
+    - PHPStan\Rules\StrictCalls\StrictFunctionCallsRule
+    - PHPStan\Rules\SwitchConditions\MatchingTypeInSwitchCaseConditionRule
+    - PHPStan\Rules\VariableVariables\VariableMethodCallRule
+    - PHPStan\Rules\VariableVariables\VariableStaticMethodCallRule
+    - PHPStan\Rules\VariableVariables\VariableStaticPropertyFetchRule
+    - PHPStan\Rules\VariableVariables\VariableVariablesRule
+#    - App\PhpStan\CatchThrowableInspection
+#    - App\PhpStan\InsaneComparisonRule
+services:
+    - PHPStan\Rules\Operators\OperatorRuleHelper
+parameters:
+    level: 6
+    tmpDir: /tmp/phpstan
+    paths:
+        - .
+    excludePaths:
+        analyseAndScan:
+            - vendor/
+            - var/
+    reportUnmatchedIgnoredErrors: false
+    polluteScopeWithLoopInitialAssignments: false
+    polluteScopeWithAlwaysIterableForeach: false
+    checkAlwaysTrueCheckTypeFunctionCall: false
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    reportMaybesInMethodSignatures: false
+    reportStaticMethodSignatures: true
+    inferPrivatePropertyTypeFromConstructor: true
+    checkMissingIterableValueType: true
+    checkInternalClassCaseSensitivity: true
+    # т.к. это библиотека, мы не уверены в типах входных значений
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        - path: ecs.php
+          message: '#Class PhpCsFixer\\.+ not found#'

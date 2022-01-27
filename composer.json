@@ -1,0 +1,43 @@
+{
+  "name": "pik-broker/request-object-resolver-bundle",
+  "description": "Bundle for resolving and validate http request to object",
+  "type": "symfony-bundle",
+  "require": {
+    "php": ">=8.0",
+    "doctrine/inflector": "^2.0",
+    "symfony/framework-bundle": "^5.4|^6.0",
+    "symfony/property-access": "^5.4|^6.0",
+    "symfony/serializer": "^5.4|^6.0",
+    "symfony/validator": "^5.4|^6.0",
+    "symfony/yaml": "^5.4|^6.0"
+  },
+  "require-dev": {
+    "doctrine/annotations": "^1.13",
+    "phpstan/phpstan": "^1.4",
+    "phpstan/phpstan-phpunit": "^1.0",
+    "phpstan/phpstan-strict-rules": "^1.1",
+    "phpunit/phpunit": "^9.5",
+    "roave/security-advisories": "dev-latest",
+    "symplify/easy-coding-standard": "^10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "RequestObjectResolverBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "RequestObjectResolverBundle\\Tests\\": "tests/"
+    }
+  },
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Aleksandr Kvintilyanov",
+      "email": "a.kvintilyanov@pik-broker.ru"
+    }
+  ],
+  "config": {
+    "sort-packages": true
+  }
+}
