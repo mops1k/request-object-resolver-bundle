@@ -2,11 +2,13 @@
 
 namespace RequestObjectResolverBundle\EventDispatcher;
 
+use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class BeforeRequestObjectDeserializeEvent extends Event
 {
     /**
+     * @param class-string<RequestObjectInterface> $objectToResolve
      * @param array<mixed>  $resolvedParameters
      */
     public function __construct(
@@ -23,6 +25,9 @@ class BeforeRequestObjectDeserializeEvent extends Event
         return $this->resolvedParameters;
     }
 
+    /**
+     * @return class-string<RequestObjectInterface>
+     */
     public function getObjectToResolve(): string
     {
         return $this->objectToResolve;

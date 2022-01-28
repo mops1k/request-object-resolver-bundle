@@ -18,16 +18,21 @@ class RequestObjectValidationFailHttpException extends BadRequestHttpException
      */
     public function __construct(ConstraintViolationListInterface $constraints, \Throwable $previous = null, int $code = 0, array $headers = [])
     {
+        $errorMessages = [];
         /** @var ConstraintViolationInterface $constraint */
         foreach ($constraints as $constraint) {
-            $this->errors[] = \sprintf(
+            $this->errors[] = [
+                'field' => $constraint->getPropertyPath(),
+                'message' => $constraint->getMessage(),
+            ];
+            $errorMessages[] = \sprintf(
                 '[%s] %s',
                 $constraint->getPropertyPath(),
                 $constraint->getMessage(),
             );
         }
 
-        $message = \sprintf('Request validation failed. Errors: %s', implode(', ', $this->errors));
+        $message = \sprintf('Request validation failed. Errors: %s', implode(', ', $errorMessages));
         parent::__construct($message, $previous, $code, $headers);
     }
 
