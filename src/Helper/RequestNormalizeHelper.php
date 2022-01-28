@@ -8,10 +8,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @todo заменить статические методы на динамические
+ * @internal
  */
-class RequestNormalizeHelper
+final class RequestNormalizeHelper
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @return array<mixed>
      */
