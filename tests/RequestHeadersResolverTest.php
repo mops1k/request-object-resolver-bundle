@@ -2,10 +2,10 @@
 
 namespace Kvarta\RequestObjectResolverBundle\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Kvarta\RequestObjectResolverBundle\Http\RequestCookies;
 use Kvarta\RequestObjectResolverBundle\Http\RequestHeaders;
 use Kvarta\RequestObjectResolverBundle\Resolver\RequestHeadersResolver;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
