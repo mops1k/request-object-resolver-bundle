@@ -97,3 +97,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: 'Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent' }
 ```
+
+## @TODO
+- [ ] добавить валидацию для объектов headers
+- [ ] добавить валидацию для объектов cookies
