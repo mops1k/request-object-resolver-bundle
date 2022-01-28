@@ -85,6 +85,9 @@ class RequestObjectResolverTest extends KernelTestCase
         $resolverResult->next();
     }
 
+    /**
+     * @return iterable<array<mixed>>
+     */
     public function requestResolveSuccessParametersProvider(): iterable
     {
         yield 'test with int' => ['parameter' => 1, 'expectedValue' => '1'];
@@ -176,10 +179,13 @@ class RequestObjectResolverTest extends KernelTestCase
         }
     }
 
+    /**
+     * @return iterable<array<mixed>>
+     */
     public function requestResolveFailParametersProvider(): iterable
     {
-        yield 'test with string' => ['parameter' => 'test_value', 'expectedExceptionMessage' =>  'Request validation failed.'];
-        yield 'test with null' => ['parameter' => null, 'expectedExceptionMessage' =>  'Passed a value with type null, expected type string'];
-        yield 'test with array' => ['parameter' => [], 'expectedExceptionMessage' =>  'Passed a value with type array, expected type string'];
+        yield 'test with string' => ['parameter' => 'test_value', 'expectedExceptionMessage' => 'Request validation failed.'];
+        yield 'test with null' => ['parameter' => null, 'expectedExceptionMessage' => 'Passed a value with type null, expected type string'];
+        yield 'test with array' => ['parameter' => [], 'expectedExceptionMessage' => 'Passed a value with type array, expected type string'];
     }
 }

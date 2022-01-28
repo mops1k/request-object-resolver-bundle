@@ -8,6 +8,7 @@ class RequestObjectDeserializationHttpException extends BadRequestHttpException
 {
     /**
      * @param array<string> $errors
+     * @param array<mixed> $headers
      */
     public function __construct(private array $errors, \Throwable $previous = null, int $code = 0, array $headers = [])
     {
