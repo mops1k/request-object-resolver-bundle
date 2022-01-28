@@ -18,6 +18,8 @@ final class RequestNormalizeHelper
 
     /**
      * @return array<mixed>
+     *
+     * @internal
      */
     public static function normalizeRequest(Request $request): array
     {
@@ -35,6 +37,9 @@ final class RequestNormalizeHelper
         return \array_merge($queryParameters, $requestParameters, $contentData, $routeParams);
     }
 
+    /**
+     * @internal
+     */
     public static function addFilesFromRequestToObject(Request $request, RequestObjectInterface $object): void
     {
         $inflector = InflectorFactory::create()->build();
@@ -52,6 +57,8 @@ final class RequestNormalizeHelper
 
     /**
      * @return array<mixed>
+     *
+     * @internal
      */
     public static function normalizeHeaders(Request $request): array
     {
