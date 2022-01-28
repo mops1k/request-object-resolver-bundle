@@ -2,24 +2,50 @@ stages:
   - test
   - deploy
 
+code style:
+  stage: test
+  image: php:8.0-cli
+  variables:
+    XDEBUG_MODE: coverage
+  before_script:
+    - apt-get update && apt-get -yq install git unzip zip libzip-dev zlib1g-dev
+    - docker-php-ext-install zip
+    - curl -sSf "https://getcomposer.org/installer" | php -- --filename=composer --install-dir=/usr/local/bin
+    - composer update
+  script:
+    - vendor/bin/phpstan --memory-limit=-1 --no-progress
+    - vendor/bin/ecs --no-error-table --no-progress-bar
+
 test:
   stage: test
   image: php:8.0-cli
-  script:
-    - apt-get update && apt-get install -qy unzip git
+  variables:
+    XDEBUG_MODE: coverage
+  before_script:
+    - apt-get update && apt-get -yq install git unzip zip libzip-dev zlib1g-dev
+    - docker-php-ext-install zip
+    - pecl install xdebug && docker-php-ext-enable xdebug
     - curl -sSf "https://getcomposer.org/installer" | php -- --filename=composer --install-dir=/usr/local/bin
     - composer update
-    - vendor/bin/phpstan --memory-limit=-1 --no-progress
-    - vendor/bin/phpunit
-    - vendor/bin/ecs --no-error-table --no-progress-bar
+    - composer require --dev phpunit/php-code-coverage
+  script:
+    - vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml
+  artifacts:
+    reports:
+      cobertura: coverage.cobertura.xml
 
 test lowest deps:
   stage: test
   image: php:8.0-cli
-  script:
-    - apt-get update && apt-get install -qy unzip git
+  variables:
+    XDEBUG_MODE: coverage
+  before_script:
+    - apt-get update && apt-get -yq install git unzip zip libzip-dev zlib1g-dev
+    - docker-php-ext-install zip
     - curl -sSf "https://getcomposer.org/installer" | php -- --filename=composer --install-dir=/usr/local/bin
     - composer update --prefer-lowest
+    - composer require --dev phpunit/phpunit phpunit/php-code-coverage
+  script:
     - vendor/bin/phpunit
 
 deploy:
