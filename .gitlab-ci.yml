@@ -56,3 +56,18 @@ deploy:
     - tags
   script:
     - 'curl --header "Job-Token: $CI_JOB_TOKEN" --data tag=$CI_COMMIT_TAG "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer"'
+
+badge:
+  stage: deploy
+  image: python:3.6
+  when: always
+  only:
+    - tags
+  before_script:
+    - pip install anybadge
+  script:
+    - anybadge -l "Last Version" -v "$CI_COMMIT_TAG" -f last-version.svg -c green
+  artifacts:
+    paths:
+      - last-version.svg
+    when: always
