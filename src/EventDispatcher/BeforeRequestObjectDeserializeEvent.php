@@ -1,8 +1,8 @@
 <?php
 
-namespace RequestObjectResolverBundle\EventDispatcher;
+namespace Kvarta\RequestObjectResolverBundle\EventDispatcher;
 
-use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class BeforeRequestObjectDeserializeEvent extends Event

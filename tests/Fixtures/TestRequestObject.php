@@ -1,8 +1,8 @@
 <?php
 
-namespace RequestObjectResolverBundle\Tests\Fixtures;
+namespace Kvarta\RequestObjectResolverBundle\Tests\Fixtures;
 
-use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints\NotBlank;

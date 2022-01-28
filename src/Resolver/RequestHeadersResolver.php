@@ -1,9 +1,9 @@
 <?php
 
-namespace RequestObjectResolverBundle\Resolver;
+namespace Kvarta\RequestObjectResolverBundle\Resolver;
 
-use RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
-use RequestObjectResolverBundle\Http\RequestHeaders;
+use Kvarta\RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
+use Kvarta\RequestObjectResolverBundle\Http\RequestHeaders;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

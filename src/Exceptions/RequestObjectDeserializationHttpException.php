@@ -1,6 +1,6 @@
 <?php
 
-namespace RequestObjectResolverBundle\Exceptions;
+namespace Kvarta\RequestObjectResolverBundle\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 

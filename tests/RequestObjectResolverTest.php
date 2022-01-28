@@ -1,16 +1,16 @@
 <?php
 
-namespace RequestObjectResolverBundle\Tests;
+namespace Kvarta\RequestObjectResolverBundle\Tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
-use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
-use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
-use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
-use RequestObjectResolverBundle\Resolver\RequestObjectResolver;
-use RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
-use RequestObjectResolverBundle\Tests\Fixtures\TestListener;
-use RequestObjectResolverBundle\Tests\Fixtures\TestRequestObject;
+use Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
+use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
+use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\Resolver\RequestObjectResolver;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestListener;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestRequestObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
