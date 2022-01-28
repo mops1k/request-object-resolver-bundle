@@ -29,7 +29,7 @@ test:
     - composer update
     - composer require --dev phpunit/php-code-coverage
   script:
-    - vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml
+    - vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml --summary-only
   artifacts:
     reports:
       cobertura: coverage.cobertura.xml
