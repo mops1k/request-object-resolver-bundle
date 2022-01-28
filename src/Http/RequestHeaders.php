@@ -4,6 +4,7 @@ namespace RequestObjectResolverBundle\Http;
 
 /**
  * @template THeaders
+ * @todo для чего THeaders? Не используется
  */
 class RequestHeaders
 {

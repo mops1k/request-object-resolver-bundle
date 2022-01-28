@@ -1,6 +1,6 @@
 <?php
 
-namespace RequestObjectResolverBundle\Tests;
+namespace RequestObjectResolverBundle\Tests\Fixtures;
 
 use RequestObjectResolverBundle\RequestObjectResolverBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;

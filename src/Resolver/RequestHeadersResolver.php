@@ -12,11 +12,11 @@ final class RequestHeadersResolver implements ArgumentValueResolverInterface
 {
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return \is_a($argument->getType(), RequestHeaders::class, true);
+        return is_a($argument->getType(), RequestHeaders::class, true);
     }
 
     /**
-     * @return \Generator<RequestHeaders<array<mixed>>>
+     * @return iterable<RequestHeaders<array<mixed>>>
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {

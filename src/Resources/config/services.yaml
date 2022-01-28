@@ -1,4 +1,7 @@
 services:
+    _defaults:
+        autowire: true
+
     RequestObjectResolverBundle\Resolver\RequestHeadersResolver:
         tags:
             - { name: 'controller.argument_value_resolver', priority: 50 }
@@ -8,9 +11,5 @@ services:
             - { name: 'controller.argument_value_resolver', priority: 50 }
 
     RequestObjectResolverBundle\Resolver\RequestObjectResolver:
-        arguments:
-            - '@serializer'
-            - '@validator'
-            - '@event_dispatcher'
         tags:
             - { name: 'controller.argument_value_resolver', priority: 50 }

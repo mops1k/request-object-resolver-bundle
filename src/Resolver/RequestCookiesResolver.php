@@ -11,11 +11,11 @@ final class RequestCookiesResolver implements ArgumentValueResolverInterface
 {
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return \is_a($argument->getType(), RequestCookies::class, true);
+        return is_a($argument->getType(), RequestCookies::class, true);
     }
 
     /**
-     * @return \Generator<RequestCookies<array<string>>>
+     * @return iterable<RequestCookies<array<string>>>
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {

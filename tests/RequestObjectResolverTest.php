@@ -7,6 +7,9 @@ use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEv
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
 use RequestObjectResolverBundle\Resolver\RequestObjectResolver;
+use RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
+use RequestObjectResolverBundle\Tests\Fixtures\TestListener;
+use RequestObjectResolverBundle\Tests\Fixtures\TestRequestObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -58,7 +61,7 @@ class RequestObjectResolverTest extends KernelTestCase
             '/?test_query=test_query_value',
             Request::METHOD_GET,
             parameters: ['test' => 'test_value'],
-            files: ['test_file' => new UploadedFile(__DIR__ . '/test_file_to_upload.txt', 'test.txt')],
+            files: ['test_file' => new UploadedFile(__DIR__ . '/Fixtures/test_file_to_upload.txt', 'test.txt')],
             content: \json_encode(['test_json' => 'test_json_value'], JSON_THROW_ON_ERROR),
         );
 
@@ -85,7 +88,7 @@ class RequestObjectResolverTest extends KernelTestCase
             '/?test_query=test_query_value',
             Request::METHOD_GET,
             parameters: ['test' => 'test_value'],
-            files: ['test_file_not_mapped' => new UploadedFile(__DIR__ . '/test_file_to_upload.txt', 'test.txt')],
+            files: ['test_file_not_mapped' => new UploadedFile(__DIR__ . '/Fixtures/test_file_to_upload.txt', 'test.txt')],
             content: 'test_content',
         );
 
@@ -111,7 +114,7 @@ class RequestObjectResolverTest extends KernelTestCase
             '/?test_query=test_query_value',
             Request::METHOD_GET,
             parameters: ['test' => 'test_value'],
-            files: ['test_file' => new UploadedFile(__DIR__ . '/test_file_to_upload.txt', 'test.txt')],
+            files: ['test_file' => new UploadedFile(__DIR__ . '/Fixtures/test_file_to_upload.txt', 'test.txt')],
             content: \json_encode(['test_json' => 'test_json_value'], JSON_THROW_ON_ERROR),
         );
 

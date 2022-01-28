@@ -24,11 +24,11 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return \is_a($argument->getType(), RequestObjectInterface::class, true);
+        return is_a($argument->getType(), RequestObjectInterface::class, true);
     }
 
     /**
-     * @return \Generator<RequestObjectInterface>
+     * @return iterable<RequestObjectInterface>
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
@@ -44,14 +44,19 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
             \json_encode($parameters, JSON_THROW_ON_ERROR),
             $type,
             'json',
-            ['disable_type_enforcement' => true],
+            [
+                'disable_type_enforcement' => true,
+                // todo: \Symfony\Component\Serializer\Normalizer\DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS
+            ],
         );
+        // todo: deserialize() нужно завернуть в try-catch, см. старый репозиторий
 
         RequestNormalizeHelper::addFilesFromRequestToObject($request, $object);
 
         // проводим валидацию объекта
         $constraints = $this->validator->validate($object);
         if (count($constraints) > 0) {
+            // todo: для чего headers?
             throw new RequestObjectValidationFailHttpException($constraints, headers: $request->headers->all());
         }
 

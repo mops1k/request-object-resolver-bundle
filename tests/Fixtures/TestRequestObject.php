@@ -1,6 +1,6 @@
 <?php
 
-namespace RequestObjectResolverBundle\Tests;
+namespace RequestObjectResolverBundle\Tests\Fixtures;
 
 use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

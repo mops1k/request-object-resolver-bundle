@@ -4,6 +4,7 @@ namespace RequestObjectResolverBundle\Http;
 
 /**
  * @template TCookies
+ * @todo Для чего TCookies? Не используется
  */
 class RequestCookies
 {

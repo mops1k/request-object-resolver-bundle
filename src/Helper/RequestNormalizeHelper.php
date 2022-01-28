@@ -7,6 +7,9 @@ use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @todo заменить статические методы на динамические
+ */
 class RequestNormalizeHelper
 {
     /**

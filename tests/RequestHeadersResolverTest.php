@@ -21,6 +21,7 @@ class RequestHeadersResolverTest extends TestCase
         static::assertTrue($resolver->supports($request, $arguments));
 
         $resolverResult = $resolver->resolve($request, $arguments);
+        // todo: напишу только здесь, но нужно поправить все тесты. Не нужно ожидать генератор, там iterable. Это детали реализации, их не нужно отдавать в публичном апи
         $headersObject = $resolverResult->current();
 
         static::assertInstanceOf(RequestHeaders::class, $headersObject);
