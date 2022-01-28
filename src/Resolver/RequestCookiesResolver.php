@@ -15,9 +15,9 @@ final class RequestCookiesResolver implements ArgumentValueResolverInterface
     }
 
     /**
-     * @return iterable<RequestCookies<array<string>>>
+     * @return \Generator<RequestCookies>
      */
-    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    public function resolve(Request $request, ArgumentMetadata $argument): \Generator
     {
         $type = $argument->getType();
 

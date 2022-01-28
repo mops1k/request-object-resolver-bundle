@@ -28,9 +28,9 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
     }
 
     /**
-     * @return iterable<RequestObjectInterface>
+     * @return \Generator<RequestObjectInterface>
      */
-    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    public function resolve(Request $request, ArgumentMetadata $argument): \Generator
     {
         $type = $argument->getType();
 
@@ -57,7 +57,7 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
         $constraints = $this->validator->validate($object);
         if (count($constraints) > 0) {
             // todo: для чего headers?
-            throw new RequestObjectValidationFailHttpException($constraints, headers: $request->headers->all());
+            throw new RequestObjectValidationFailHttpException($constraints);
         }
 
         yield $object;

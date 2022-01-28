@@ -16,9 +16,9 @@ final class RequestHeadersResolver implements ArgumentValueResolverInterface
     }
 
     /**
-     * @return iterable<RequestHeaders<array<mixed>>>
+     * @return \Generator<RequestHeaders>
      */
-    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    public function resolve(Request $request, ArgumentMetadata $argument): \Generator
     {
         $type = $argument->getType();
 
