@@ -1,12 +1,16 @@
 <?php
 
-namespace RequestObjectResolverBundle\Tests;
+namespace Kvarta\RequestObjectResolverBundle\Tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
-use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
-use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
-use RequestObjectResolverBundle\Resolver\RequestObjectResolver;
+use Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
+use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
+use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\Resolver\RequestObjectResolver;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestListener;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestRequestObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -51,14 +55,17 @@ class RequestObjectResolverTest extends KernelTestCase
         $reflection->setValue($this->resolver, $this->dispatcher);
     }
 
-    public function testRequestResolveSuccess(): void
+    /**
+     * @dataProvider requestResolveSuccessParametersProvider
+     */
+    public function testRequestResolveSuccess(mixed $parameter, string $expectedValue): void
     {
         $arguments = new ArgumentMetadata('test', TestRequestObject::class, false, false, null);
         $request = Request::create(
             '/?test_query=test_query_value',
             Request::METHOD_GET,
-            parameters: ['test' => 'test_value'],
-            files: ['test_file' => new UploadedFile(__DIR__ . '/test_file_to_upload.txt', 'test.txt')],
+            parameters: ['test' => $parameter],
+            files: ['test_file' => new UploadedFile(__DIR__ . '/Fixtures/test_file_to_upload.txt', 'test.txt')],
             content: \json_encode(['test_json' => 'test_json_value'], JSON_THROW_ON_ERROR),
         );
 
@@ -69,13 +76,22 @@ class RequestObjectResolverTest extends KernelTestCase
 
         static::assertInstanceOf(RequestObjectInterface::class, $requestObject);
         static::assertInstanceOf(TestRequestObject::class, $requestObject);
-        static::assertEquals('test_value', $requestObject->test);
+        static::assertEquals($expectedValue, $requestObject->test);
         static::assertEquals('test_json_value', $requestObject->testJson);
         static::assertEquals('test_query_value', $requestObject->testQuery);
         static::assertCount(1, $requestObject->testFile);
         static::assertInstanceOf(UploadedFile::class, $requestObject->testFile[0]);
 
         $resolverResult->next();
+    }
+
+    /**
+     * @return iterable<array<mixed>>
+     */
+    public function requestResolveSuccessParametersProvider(): iterable
+    {
+        yield 'test with int' => ['parameter' => 1, 'expectedValue' => '1'];
+        yield 'test with string' => ['parameter' => 'test_value', 'expectedValue' => 'test_value'];
     }
 
     public function testRequestResolveContentAreNotJsonAndFileHasNoPropertySuccess(): void
@@ -85,7 +101,7 @@ class RequestObjectResolverTest extends KernelTestCase
             '/?test_query=test_query_value',
             Request::METHOD_GET,
             parameters: ['test' => 'test_value'],
-            files: ['test_file_not_mapped' => new UploadedFile(__DIR__ . '/test_file_to_upload.txt', 'test.txt')],
+            files: ['test_file_not_mapped' => new UploadedFile(__DIR__ . '/Fixtures/test_file_to_upload.txt', 'test.txt')],
             content: 'test_content',
         );
 
@@ -111,7 +127,7 @@ class RequestObjectResolverTest extends KernelTestCase
             '/?test_query=test_query_value',
             Request::METHOD_GET,
             parameters: ['test' => 'test_value'],
-            files: ['test_file' => new UploadedFile(__DIR__ . '/test_file_to_upload.txt', 'test.txt')],
+            files: ['test_file' => new UploadedFile(__DIR__ . '/Fixtures/test_file_to_upload.txt', 'test.txt')],
             content: \json_encode(['test_json' => 'test_json_value'], JSON_THROW_ON_ERROR),
         );
 
@@ -133,12 +149,17 @@ class RequestObjectResolverTest extends KernelTestCase
         $resolverResult->next();
     }
 
-    public function testRequestResolveFail(): void
+
+    /**
+     * @dataProvider requestResolveFailParametersProvider
+     */
+    public function testRequestResolveFail(mixed $parameter, string $expectedExceptionMessage): void
     {
         $arguments = new ArgumentMetadata('test', TestRequestObject::class, false, false, null);
         $request = Request::create(
             '/',
             Request::METHOD_GET,
+            parameters: ['test' => $parameter],
         );
 
         static::assertTrue($this->resolver->supports($request, $arguments));
@@ -148,8 +169,23 @@ class RequestObjectResolverTest extends KernelTestCase
             $resolverResult->current();
             static::fail('Expected exception not thrown.');
         } catch (RequestObjectValidationFailHttpException $e) {
-            static::assertCount(4, $e->getErrors());
+            static::assertCount(2, $e->getErrors());
+            static::assertEquals(400, $e->getStatusCode());
+            static::assertStringContainsString($expectedExceptionMessage, $e->getMessage());
+        } catch (RequestObjectTypeErrorHttpException $e) {
+            static::assertEquals('test', $e->getField());
+            static::assertEquals($expectedExceptionMessage, $e->getMessage());
             static::assertEquals(400, $e->getStatusCode());
         }
+    }
+
+    /**
+     * @return iterable<array<mixed>>
+     */
+    public function requestResolveFailParametersProvider(): iterable
+    {
+        yield 'test with string' => ['parameter' => 'test_value', 'expectedExceptionMessage' => 'Request validation failed.'];
+        yield 'test with null' => ['parameter' => null, 'expectedExceptionMessage' => 'Passed a value with type null, expected type string'];
+        yield 'test with array' => ['parameter' => [], 'expectedExceptionMessage' => 'Passed a value with type array, expected type string'];
     }
 }

@@ -1,13 +1,13 @@
 services:
-    RequestObjectResolverBundle\Resolver\RequestHeadersResolver:
+    Kvarta\RequestObjectResolverBundle\Resolver\RequestHeadersResolver:
         tags:
             - { name: 'controller.argument_value_resolver', priority: 50 }
 
-    RequestObjectResolverBundle\Resolver\RequestCookiesResolver:
+    Kvarta\RequestObjectResolverBundle\Resolver\RequestCookiesResolver:
         tags:
             - { name: 'controller.argument_value_resolver', priority: 50 }
 
-    RequestObjectResolverBundle\Resolver\RequestObjectResolver:
+    Kvarta\RequestObjectResolverBundle\Resolver\RequestObjectResolver:
         arguments:
             - '@serializer'
             - '@validator'

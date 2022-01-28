@@ -1,8 +1,8 @@
 <?php
 
-namespace RequestObjectResolverBundle\Tests;
+namespace Kvarta\RequestObjectResolverBundle\Tests\Fixtures;
 
-use RequestObjectResolverBundle\RequestObjectResolverBundle;
+use Kvarta\RequestObjectResolverBundle\RequestObjectResolverBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

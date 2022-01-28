@@ -1,6 +1,6 @@
 <?php
 
-namespace RequestObjectResolverBundle\Interfaces;
+namespace Kvarta\RequestObjectResolverBundle\Interfaces;
 
 interface RequestObjectInterface
 {

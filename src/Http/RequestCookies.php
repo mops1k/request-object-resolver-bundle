@@ -1,10 +1,7 @@
 <?php
 
-namespace RequestObjectResolverBundle\Http;
+namespace Kvarta\RequestObjectResolverBundle\Http;
 
-/**
- * @template TCookies
- */
 class RequestCookies
 {
     /**

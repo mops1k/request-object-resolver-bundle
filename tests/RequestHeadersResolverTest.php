@@ -1,11 +1,11 @@
 <?php
 
-namespace RequestObjectResolverBundle\Tests;
+namespace Kvarta\RequestObjectResolverBundle\Tests;
 
+use Kvarta\RequestObjectResolverBundle\Http\RequestCookies;
+use Kvarta\RequestObjectResolverBundle\Http\RequestHeaders;
+use Kvarta\RequestObjectResolverBundle\Resolver\RequestHeadersResolver;
 use PHPUnit\Framework\TestCase;
-use RequestObjectResolverBundle\Http\RequestCookies;
-use RequestObjectResolverBundle\Http\RequestHeaders;
-use RequestObjectResolverBundle\Resolver\RequestHeadersResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
@@ -21,6 +21,7 @@ class RequestHeadersResolverTest extends TestCase
         static::assertTrue($resolver->supports($request, $arguments));
 
         $resolverResult = $resolver->resolve($request, $arguments);
+        // todo: напишу только здесь, но нужно поправить все тесты. Не нужно ожидать генератор, там iterable. Это детали реализации, их не нужно отдавать в публичном апи
         $headersObject = $resolverResult->current();
 
         static::assertInstanceOf(RequestHeaders::class, $headersObject);

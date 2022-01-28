@@ -1,5 +1,5 @@
 {
-  "name": "pik-broker/request-object-resolver-bundle",
+  "name": "kvarta/request-object-resolver-bundle",
   "description": "Bundle for resolving and validate http request to object",
   "type": "symfony-bundle",
   "require": {
@@ -16,18 +16,19 @@
     "phpstan/phpstan": "^1.4",
     "phpstan/phpstan-phpunit": "^1.0",
     "phpstan/phpstan-strict-rules": "^1.1",
+    "phpunit/php-code-coverage": "^9.2",
     "phpunit/phpunit": "^9.5",
     "roave/security-advisories": "dev-latest",
     "symplify/easy-coding-standard": "^10.0"
   },
   "autoload": {
     "psr-4": {
-      "RequestObjectResolverBundle\\": "src/"
+      "Kvarta\\RequestObjectResolverBundle\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "RequestObjectResolverBundle\\Tests\\": "tests/"
+      "Kvarta\\RequestObjectResolverBundle\\Tests\\": "tests/"
     }
   },
   "license": "proprietary",

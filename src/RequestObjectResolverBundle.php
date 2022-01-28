@@ -1,6 +1,6 @@
 <?php
 
-namespace RequestObjectResolverBundle;
+namespace Kvarta\RequestObjectResolverBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

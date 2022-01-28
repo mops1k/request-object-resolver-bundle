@@ -1,16 +1,25 @@
 <?php
 
-namespace RequestObjectResolverBundle\Helper;
+namespace Kvarta\RequestObjectResolverBundle\Helper;
 
 use Doctrine\Inflector\InflectorFactory;
-use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
-class RequestNormalizeHelper
+/**
+ * @internal
+ */
+final class RequestNormalizeHelper
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @return array<mixed>
+     *
+     * @internal
      */
     public static function normalizeRequest(Request $request): array
     {
@@ -28,6 +37,9 @@ class RequestNormalizeHelper
         return \array_merge($queryParameters, $requestParameters, $contentData, $routeParams);
     }
 
+    /**
+     * @internal
+     */
     public static function addFilesFromRequestToObject(Request $request, RequestObjectInterface $object): void
     {
         $inflector = InflectorFactory::create()->build();
@@ -45,6 +57,8 @@ class RequestNormalizeHelper
 
     /**
      * @return array<mixed>
+     *
+     * @internal
      */
     public static function normalizeHeaders(Request $request): array
     {
