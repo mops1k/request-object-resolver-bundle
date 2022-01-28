@@ -61,7 +61,6 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
             // проводим валидацию объекта
             $constraints = $this->validator->validate($object);
             if (count($constraints) > 0) {
-                // todo: для чего headers?
                 throw new RequestObjectValidationFailHttpException($constraints);
             }
 
