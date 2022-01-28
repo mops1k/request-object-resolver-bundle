@@ -3,12 +3,17 @@
 namespace RequestObjectResolverBundle\Resolver;
 
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
 use RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -40,26 +45,45 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
         $parameters = $event->getResolvedParameters();
 
         // десериализуем пришедший и обработанный запрос в объект
-        $object = $this->serializer->deserialize(
-            \json_encode($parameters, JSON_THROW_ON_ERROR),
-            $type,
-            'json',
-            [
-                'disable_type_enforcement' => true,
-                // todo: \Symfony\Component\Serializer\Normalizer\DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS
-            ],
-        );
-        // todo: deserialize() нужно завернуть в try-catch, см. старый репозиторий
+        try {
+            $object = $this->serializer->deserialize(
+                \json_encode($parameters, JSON_THROW_ON_ERROR),
+                $type,
+                'json',
+                [
+                    AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
+                    DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
+                ],
+            );
 
-        RequestNormalizeHelper::addFilesFromRequestToObject($request, $object);
+            RequestNormalizeHelper::addFilesFromRequestToObject($request, $object);
 
-        // проводим валидацию объекта
-        $constraints = $this->validator->validate($object);
-        if (count($constraints) > 0) {
-            // todo: для чего headers?
-            throw new RequestObjectValidationFailHttpException($constraints);
+            // проводим валидацию объекта
+            $constraints = $this->validator->validate($object);
+            if (count($constraints) > 0) {
+                // todo: для чего headers?
+                throw new RequestObjectValidationFailHttpException($constraints);
+            }
+
+            yield $object;
+        } catch (\TypeError $error) {
+            if (preg_match(
+                '/^Cannot assign (\S+) to property \S+::\$(\S+) of type (\S+)$/',
+                $error->getMessage(),
+                $matches
+            )) {
+                // $propertyPath может быть не точным (из-за SerializedName), но больше у нас ничего нет
+                [, $actualType, $propertyPath, $expectedType] = $matches;
+
+                throw new RequestObjectTypeErrorHttpException($propertyPath, $actualType, $expectedType);
+            }
+        } catch (PartialDenormalizationException $exception) {
+            $errors = [];
+            foreach ($exception->getErrors() as $error) {
+                $errors[] = (string)$error;
+            }
+
+            throw new RequestObjectDeserializationHttpException($errors);
         }
-
-        yield $object;
     }
 }

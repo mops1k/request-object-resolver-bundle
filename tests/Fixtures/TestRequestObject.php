@@ -10,9 +10,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 
 class TestRequestObject implements RequestObjectInterface
 {
-    #[NotNull]
-    #[NotBlank]
-    public ?string $test = null;
+    public string $test;
 
     /**
      * @SerializedName(serializedName="test_json")
