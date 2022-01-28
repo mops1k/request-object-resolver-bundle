@@ -9,7 +9,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 class RequestObjectValidationFailHttpException extends BadRequestHttpException
 {
     /**
-     * @var array<string, string>
+     * @var array<array{field: string, message: string}>
      */
     private array $errors = [];
 
@@ -37,7 +37,7 @@ class RequestObjectValidationFailHttpException extends BadRequestHttpException
     }
 
     /**
-     * @return string[]
+     * @return array<array{field: string, message: string}>
      */
     public function getErrors(): array
     {
