@@ -6,11 +6,11 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
 use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
-use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
 use Kvarta\RequestObjectResolverBundle\Resolver\RequestObjectResolver;
 use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
 use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestListener;
-use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestRequestObject;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestRequestModel;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -60,7 +60,7 @@ class RequestObjectResolverTest extends KernelTestCase
      */
     public function testRequestResolveSuccess(mixed $parameter, string $expectedValue): void
     {
-        $arguments = new ArgumentMetadata('test', TestRequestObject::class, false, false, null);
+        $arguments = new ArgumentMetadata('test', TestRequestModel::class, false, false, null);
         $request = Request::create(
             '/?test_query=test_query_value',
             Request::METHOD_GET,
@@ -74,8 +74,8 @@ class RequestObjectResolverTest extends KernelTestCase
         $resolverResult = $this->resolver->resolve($request, $arguments);
         $requestObject = $resolverResult->current();
 
-        static::assertInstanceOf(RequestObjectInterface::class, $requestObject);
-        static::assertInstanceOf(TestRequestObject::class, $requestObject);
+        static::assertInstanceOf(RequestModelInterface::class, $requestObject);
+        static::assertInstanceOf(TestRequestModel::class, $requestObject);
         static::assertEquals($expectedValue, $requestObject->test);
         static::assertEquals('test_json_value', $requestObject->testJson);
         static::assertEquals('test_query_value', $requestObject->testQuery);
@@ -96,7 +96,7 @@ class RequestObjectResolverTest extends KernelTestCase
 
     public function testRequestResolveContentAreNotJsonAndFileHasNoPropertySuccess(): void
     {
-        $arguments = new ArgumentMetadata('test', TestRequestObject::class, false, false, null);
+        $arguments = new ArgumentMetadata('test', TestRequestModel::class, false, false, null);
         $request = Request::create(
             '/?test_query=test_query_value',
             Request::METHOD_GET,
@@ -110,8 +110,8 @@ class RequestObjectResolverTest extends KernelTestCase
         $resolverResult = $this->resolver->resolve($request, $arguments);
         $requestObject = $resolverResult->current();
 
-        static::assertInstanceOf(RequestObjectInterface::class, $requestObject);
-        static::assertInstanceOf(TestRequestObject::class, $requestObject);
+        static::assertInstanceOf(RequestModelInterface::class, $requestObject);
+        static::assertInstanceOf(TestRequestModel::class, $requestObject);
         static::assertEquals('test_value', $requestObject->test);
         static::assertNull($requestObject->testJson);
         static::assertEquals('test_query_value', $requestObject->testQuery);
@@ -122,7 +122,7 @@ class RequestObjectResolverTest extends KernelTestCase
 
     public function testRequestResolveSuccessWithListener(): void
     {
-        $arguments = new ArgumentMetadata('test', TestRequestObject::class, false, false, null);
+        $arguments = new ArgumentMetadata('test', TestRequestModel::class, false, false, null);
         $request = Request::create(
             '/?test_query=test_query_value',
             Request::METHOD_GET,
@@ -138,8 +138,8 @@ class RequestObjectResolverTest extends KernelTestCase
         $resolverResult = $this->resolver->resolve($request, $arguments);
         $requestObject = $resolverResult->current();
 
-        static::assertInstanceOf(RequestObjectInterface::class, $requestObject);
-        static::assertInstanceOf(TestRequestObject::class, $requestObject);
+        static::assertInstanceOf(RequestModelInterface::class, $requestObject);
+        static::assertInstanceOf(TestRequestModel::class, $requestObject);
         static::assertEquals('test_value_modified', $requestObject->test);
         static::assertEquals('test_json_value', $requestObject->testJson);
         static::assertEquals('test_query_value', $requestObject->testQuery);
@@ -155,7 +155,7 @@ class RequestObjectResolverTest extends KernelTestCase
      */
     public function testRequestResolveFail(mixed $parameter, string $expectedExceptionMessage): void
     {
-        $arguments = new ArgumentMetadata('test', TestRequestObject::class, false, false, null);
+        $arguments = new ArgumentMetadata('test', TestRequestModel::class, false, false, null);
         $request = Request::create(
             '/',
             Request::METHOD_GET,

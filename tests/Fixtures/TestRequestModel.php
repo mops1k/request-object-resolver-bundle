@@ -2,13 +2,13 @@
 
 namespace Kvarta\RequestObjectResolverBundle\Tests\Fixtures;
 
-use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class TestRequestObject implements RequestObjectInterface
+class TestRequestModel implements RequestModelInterface
 {
     public string $test;
 

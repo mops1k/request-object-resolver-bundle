@@ -32,17 +32,13 @@ composer require kvarta/request-object-resolver-bundle
 
 ## Использование
 Пример:
+
 ```php
 <?php
 
-use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Routing\Annotation\Route;
+use Kvarta\RequestObjectResolverBundle\RequestModelInterface;use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;use Symfony\Component\HttpFoundation\JsonResponse;use Symfony\Component\HttpFoundation\Request;use Symfony\Component\Routing\Annotation\Route;use Symfony\Component\Validator\Constraints as Assert;
 
-class ExampleRequest implements RequestObjectInterface
+class ExampleRequest implements RequestModelInterface
 {
     #[Assert\NotNull]
     #[Assert\GreaterThan(0)]

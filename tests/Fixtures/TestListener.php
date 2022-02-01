@@ -8,7 +8,7 @@ class TestListener
 {
     public function beforeDeserialization(BeforeRequestObjectDeserializeEvent $event): void
     {
-        if (!is_a($event->getObjectToResolve(), TestRequestObject::class, true)) {
+        if (!is_a($event->getObjectToResolve(), TestRequestModel::class, true)) {
             return;
         }
 
