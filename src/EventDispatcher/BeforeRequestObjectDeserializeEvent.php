@@ -2,13 +2,13 @@
 
 namespace Kvarta\RequestObjectResolverBundle\EventDispatcher;
 
-use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class BeforeRequestObjectDeserializeEvent extends Event
 {
     /**
-     * @param class-string<RequestObjectInterface> $objectToResolve
+     * @param class-string<\Kvarta\RequestObjectResolverBundle\RequestModelInterface> $objectToResolve
      * @param array<mixed>  $resolvedParameters
      */
     public function __construct(
@@ -26,7 +26,7 @@ class BeforeRequestObjectDeserializeEvent extends Event
     }
 
     /**
-     * @return class-string<RequestObjectInterface>
+     * @return class-string<RequestModelInterface>
      */
     public function getObjectToResolve(): string
     {

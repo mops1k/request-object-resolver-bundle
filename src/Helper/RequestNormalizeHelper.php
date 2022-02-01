@@ -3,7 +3,7 @@
 namespace Kvarta\RequestObjectResolverBundle\Helper;
 
 use Doctrine\Inflector\InflectorFactory;
-use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -40,7 +40,7 @@ final class RequestNormalizeHelper
     /**
      * @internal
      */
-    public static function addFilesFromRequestToObject(Request $request, RequestObjectInterface $object): void
+    public static function addFilesFromRequestToObject(Request $request, RequestModelInterface $object): void
     {
         $inflector = InflectorFactory::create()->build();
         /** @var UploadedFile|array<UploadedFile> $file */

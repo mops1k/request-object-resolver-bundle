@@ -2,12 +2,13 @@
 
 namespace Kvarta\RequestObjectResolverBundle\Resolver;
 
+use Generator;
 use Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
 use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
 use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
 use Kvarta\RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
-use Kvarta\RequestObjectResolverBundle\Interfaces\RequestObjectInterface;
+use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -17,6 +18,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use TypeError;
 
 final class RequestObjectResolver implements ArgumentValueResolverInterface
 {
@@ -29,13 +31,13 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return is_a($argument->getType(), RequestObjectInterface::class, true);
+        return is_a($argument->getType(), RequestModelInterface::class, true);
     }
 
     /**
-     * @return \Generator<RequestObjectInterface>
+     * @return Generator<RequestModelInterface>
      */
-    public function resolve(Request $request, ArgumentMetadata $argument): \Generator
+    public function resolve(Request $request, ArgumentMetadata $argument): Generator
     {
         $type = $argument->getType();
 
@@ -47,7 +49,7 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
         // десериализуем пришедший и обработанный запрос в объект
         try {
             $object = $this->serializer->deserialize(
-                \json_encode($parameters, JSON_THROW_ON_ERROR),
+                json_encode($parameters, JSON_THROW_ON_ERROR),
                 $type,
                 'json',
                 [
@@ -65,7 +67,7 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
             }
 
             yield $object;
-        } catch (\TypeError $error) {
+        } catch (TypeError $error) {
             if (preg_match(
                 '/^Cannot assign (\S+) to property \S+::\$(\S+) of type (\S+)$/',
                 $error->getMessage(),
@@ -76,6 +78,8 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
 
                 throw new RequestObjectTypeErrorHttpException($propertyPath, $actualType, $expectedType);
             }
+
+            throw $error;
         } catch (PartialDenormalizationException $exception) {
             $errors = [];
             foreach ($exception->getErrors() as $error) {
