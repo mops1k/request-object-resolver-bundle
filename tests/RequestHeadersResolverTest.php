@@ -2,26 +2,40 @@
 
 namespace Kvarta\RequestObjectResolverBundle\Tests;
 
+use Kvarta\RequestObjectResolverBundle\Exceptions\RequestHeadersValidationFailHttpException;
 use Kvarta\RequestObjectResolverBundle\Http\RequestCookies;
 use Kvarta\RequestObjectResolverBundle\Http\RequestHeaders;
 use Kvarta\RequestObjectResolverBundle\Resolver\RequestHeadersResolver;
-use PHPUnit\Framework\TestCase;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
+use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestRequestHeaders;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class RequestHeadersResolverTest extends TestCase
+class RequestHeadersResolverTest extends KernelTestCase
 {
+    private RequestHeadersResolver $resolver;
+
+    protected static function getKernelClass(): string
+    {
+        return TestKernel::class;
+    }
+
+    public function setUp(): void
+    {
+        self::bootKernel();
+        $this->resolver = self::getContainer()->get(RequestHeadersResolver::class);
+    }
+
     public function testResolveHeadersSuccess(): void
     {
         $arguments = new ArgumentMetadata('test', RequestHeaders::class, false, false, null);
         $request = Request::create('/', Request::METHOD_GET);
         $request->headers->set('x-test', 'test_value');
 
-        $resolver = new RequestHeadersResolver();
-        static::assertTrue($resolver->supports($request, $arguments));
+        static::assertTrue($this->resolver->supports($request, $arguments));
 
-        $resolverResult = $resolver->resolve($request, $arguments);
-        // todo: напишу только здесь, но нужно поправить все тесты. Не нужно ожидать генератор, там iterable. Это детали реализации, их не нужно отдавать в публичном апи
+        $resolverResult = $this->resolver->resolve($request, $arguments);
         $headersObject = $resolverResult->current();
 
         static::assertInstanceOf(RequestHeaders::class, $headersObject);
@@ -37,7 +51,37 @@ class RequestHeadersResolverTest extends TestCase
         $request = Request::create('/', Request::METHOD_GET);
         $request->headers->set('x-test', 'test_value');
 
-        $resolver = new RequestHeadersResolver();
-        static::assertFalse($resolver->supports($request, $arguments));
+        static::assertFalse($this->resolver->supports($request, $arguments));
+    }
+
+    public function testResolveHeadersObjectValidationSuccess(): void
+    {
+        $arguments = new ArgumentMetadata('test', TestRequestHeaders::class, false, false, null);
+        $request = Request::create('/', Request::METHOD_GET);
+        $request->headers->set('test', 'test_value');
+
+        static::assertTrue($this->resolver->supports($request, $arguments));
+
+        $resolverResult = $this->resolver->resolve($request, $arguments);
+        $headersObject = $resolverResult->current();
+
+        static::assertInstanceOf(TestRequestHeaders::class, $headersObject);
+        static::assertEquals('test_value', $headersObject->getTest());
+        static::assertNull($headersObject->get('x-test-undefined'));
+
+        $resolverResult->next();
+    }
+
+    public function testResolveHeadersObjectValidationFail(): void
+    {
+        $arguments = new ArgumentMetadata('test', TestRequestHeaders::class, false, false, null);
+        $request = Request::create('/', Request::METHOD_GET);
+        $request->headers->set('x-test', 'test_value');
+
+        static::assertTrue($this->resolver->supports($request, $arguments));
+
+        $this->expectException(RequestHeadersValidationFailHttpException::class);
+        $resolverResult = $this->resolver->resolve($request, $arguments);
+        $resolverResult->current();
     }
 }

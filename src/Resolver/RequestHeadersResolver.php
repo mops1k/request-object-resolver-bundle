@@ -2,14 +2,20 @@
 
 namespace Kvarta\RequestObjectResolverBundle\Resolver;
 
+use Kvarta\RequestObjectResolverBundle\Exceptions\RequestHeadersValidationFailHttpException;
 use Kvarta\RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
 use Kvarta\RequestObjectResolverBundle\Http\RequestHeaders;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class RequestHeadersResolver implements ArgumentValueResolverInterface
 {
+    public function __construct(private ValidatorInterface $validator)
+    {
+    }
+
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         return is_a($argument->getType(), RequestHeaders::class, true);
@@ -22,6 +28,13 @@ final class RequestHeadersResolver implements ArgumentValueResolverInterface
     {
         $type = $argument->getType();
 
-        yield new $type(RequestNormalizeHelper::normalizeHeaders($request));
+        $result = new $type(RequestNormalizeHelper::normalizeHeaders($request));
+
+        $constraints = $this->validator->validate($result);
+        if (count($constraints) > 0) {
+            throw new RequestHeadersValidationFailHttpException($constraints);
+        }
+
+        yield $result;
     }
 }

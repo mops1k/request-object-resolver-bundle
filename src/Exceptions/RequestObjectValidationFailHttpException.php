@@ -11,7 +11,7 @@ class RequestObjectValidationFailHttpException extends BadRequestHttpException
     /**
      * @var array<array{field: string, message: string}>
      */
-    private array $errors = [];
+    protected array $errors = [];
 
     /**
      * @param array<mixed> $headers

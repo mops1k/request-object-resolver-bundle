@@ -1,5 +1,7 @@
 services:
     Kvarta\RequestObjectResolverBundle\Resolver\RequestHeadersResolver:
+        arguments:
+            - '@validator'
         tags:
             - { name: 'controller.argument_value_resolver', priority: 50 }
 
