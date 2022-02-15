@@ -36,7 +36,12 @@ composer require kvarta/request-object-resolver-bundle
 ```php
 <?php
 
-use Kvarta\RequestObjectResolverBundle\RequestModelInterface;use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;use Symfony\Component\HttpFoundation\JsonResponse;use Symfony\Component\HttpFoundation\Request;use Symfony\Component\Routing\Annotation\Route;use Symfony\Component\Validator\Constraints as Assert;
+use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ExampleRequest implements RequestModelInterface
 {
@@ -95,5 +100,4 @@ services:
 ```
 
 ## @TODO
-- [ ] добавить валидацию для объектов headers
 - [ ] добавить валидацию для объектов cookies
