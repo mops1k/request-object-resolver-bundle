@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class BeforeRequestObjectDeserializeEvent extends Event
 {
     /**
-     * @param class-string<\Kvarta\RequestObjectResolverBundle\RequestModelInterface> $objectToResolve
+     * @param class-string<RequestModelInterface> $objectToResolve
      * @param array<mixed>  $resolvedParameters
      */
     public function __construct(
