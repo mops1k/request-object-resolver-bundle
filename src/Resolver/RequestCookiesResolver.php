@@ -1,8 +1,8 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Resolver;
+namespace RequestObjectResolverBundle\Resolver;
 
-use Kvarta\RequestObjectResolverBundle\Http\RequestCookies;
+use RequestObjectResolverBundle\Http\RequestCookies;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

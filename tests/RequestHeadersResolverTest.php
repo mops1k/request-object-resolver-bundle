@@ -1,13 +1,13 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Tests;
+namespace RequestObjectResolverBundle\Tests;
 
-use Kvarta\RequestObjectResolverBundle\Exceptions\RequestHeadersValidationFailHttpException;
-use Kvarta\RequestObjectResolverBundle\Http\RequestCookies;
-use Kvarta\RequestObjectResolverBundle\Http\RequestHeaders;
-use Kvarta\RequestObjectResolverBundle\Resolver\RequestHeadersResolver;
-use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
-use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestRequestHeaders;
+use RequestObjectResolverBundle\Exceptions\RequestHeadersValidationFailHttpException;
+use RequestObjectResolverBundle\Http\RequestCookies;
+use RequestObjectResolverBundle\Http\RequestHeaders;
+use RequestObjectResolverBundle\Resolver\RequestHeadersResolver;
+use RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
+use RequestObjectResolverBundle\Tests\Fixtures\TestRequestHeaders;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

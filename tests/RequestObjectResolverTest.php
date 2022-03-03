@@ -1,16 +1,17 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Tests;
+namespace RequestObjectResolverBundle\Tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
-use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
-use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
-use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
-use Kvarta\RequestObjectResolverBundle\Resolver\RequestObjectResolver;
-use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
-use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestListener;
-use Kvarta\RequestObjectResolverBundle\Tests\Fixtures\TestRequestModel;
+use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
+use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
+use RequestObjectResolverBundle\RequestModelInterface;
+use RequestObjectResolverBundle\Resolver\RequestObjectResolver;
+use RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
+use RequestObjectResolverBundle\Tests\Fixtures\TestListener;
+use RequestObjectResolverBundle\Tests\Fixtures\TestRequestModel;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -175,6 +176,8 @@ class RequestObjectResolverTest extends KernelTestCase
         } catch (RequestObjectTypeErrorHttpException $e) {
             static::assertEquals('test', $e->getField());
             static::assertEquals($expectedExceptionMessage, $e->getMessage());
+            static::assertEquals(400, $e->getStatusCode());
+        } catch (RequestObjectDeserializationHttpException $e) {
             static::assertEquals(400, $e->getStatusCode());
         }
     }

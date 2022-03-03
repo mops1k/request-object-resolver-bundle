@@ -1,14 +1,14 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Resolver;
+namespace RequestObjectResolverBundle\Resolver;
 
 use Generator;
-use Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
-use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
-use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
-use Kvarta\RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
-use Kvarta\RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
-use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
+use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
+use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
+use RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
+use RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Helper;
+namespace RequestObjectResolverBundle\Helper;
 
 use Doctrine\Inflector\InflectorFactory;
-use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
+use RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 

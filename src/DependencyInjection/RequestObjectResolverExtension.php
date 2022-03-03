@@ -1,6 +1,6 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\DependencyInjection;
+namespace RequestObjectResolverBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

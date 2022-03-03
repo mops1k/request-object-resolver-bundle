@@ -1,8 +1,8 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Tests\Fixtures;
+namespace RequestObjectResolverBundle\Tests\Fixtures;
 
-use Kvarta\RequestObjectResolverBundle\Http\RequestHeaders;
+use RequestObjectResolverBundle\Http\RequestHeaders;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class TestRequestHeaders extends RequestHeaders

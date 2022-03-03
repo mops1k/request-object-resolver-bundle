@@ -1,6 +1,6 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Exceptions;
+namespace RequestObjectResolverBundle\Exceptions;
 
 class RequestHeadersValidationFailHttpException extends RequestObjectValidationFailHttpException
 {

@@ -10,24 +10,13 @@ Symfony библиотека, позволяющая десериализова�
 - json тело запроса
 - загруженные файлы
 - параметры роутинга
-- куки (см. [Kvarta\RequestObjectResolverBundle\Http\RequestCookies](./src/Http/RequestCookies.php))
-- хедеры (см. [Kvarta\RequestObjectResolverBundle\Http\RequestHeaders](./src/Http/RequestHeaders.php))
+- куки (см. [RequestObjectResolverBundle\Http\RequestCookies](./src/Http/RequestCookies.php))
+- хедеры (см. [RequestObjectResolverBundle\Http\RequestHeaders](./src/Http/RequestHeaders.php))
 
 ## Установка
 1. Добавить в composer.json
-```json
-{
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://git.structure.pik-broker.ru/api/v4/group/184/-/packages/composer/packages.json"
-    }
-  ]
-}
-```
-2. Выполнить
 ```bash
-composer require kvarta/request-object-resolver-bundle
+composer require mops1k/request-object-resolver-bundle
 ```
 
 ## Использование
@@ -36,7 +25,7 @@ composer require kvarta/request-object-resolver-bundle
 ```php
 <?php
 
-use Kvarta\RequestObjectResolverBundle\RequestModelInterface;
+use RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,7 +64,7 @@ class ExampleController extends AbstractController
 ```php
 <?php
 
-use Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 
 class ExampleListener
 {
@@ -96,7 +85,7 @@ class ExampleListener
 services:
     ExampleListener:
         tags:
-            - { name: kernel.event_listener, event: 'Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent' }
+            - { name: kernel.event_listener, event: 'RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent' }
 ```
 
 ## @TODO

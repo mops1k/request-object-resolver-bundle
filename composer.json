@@ -1,5 +1,5 @@
 {
-  "name": "kvarta/request-object-resolver-bundle",
+  "name": "mops1k/request-object-resolver-bundle",
   "description": "Bundle for resolving and validate http request to object",
   "type": "symfony-bundle",
   "require": {
@@ -23,19 +23,19 @@
   },
   "autoload": {
     "psr-4": {
-      "Kvarta\\RequestObjectResolverBundle\\": "src/"
+      "RequestObjectResolverBundle\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Kvarta\\RequestObjectResolverBundle\\Tests\\": "tests/"
+      "RequestObjectResolverBundle\\Tests\\": "tests/"
     }
   },
   "license": "proprietary",
   "authors": [
     {
       "name": "Aleksandr Kvintilyanov",
-      "email": "a.kvintilyanov@pik-broker.ru"
+      "email": "bednyj.mops@gmail.com"
     }
   ],
   "config": {

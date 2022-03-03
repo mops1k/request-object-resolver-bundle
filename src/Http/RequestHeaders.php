@@ -1,6 +1,6 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Http;
+namespace RequestObjectResolverBundle\Http;
 
 class RequestHeaders
 {

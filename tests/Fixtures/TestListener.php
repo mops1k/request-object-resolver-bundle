@@ -1,8 +1,8 @@
 <?php
 
-namespace Kvarta\RequestObjectResolverBundle\Tests\Fixtures;
+namespace RequestObjectResolverBundle\Tests\Fixtures;
 
-use Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 
 class TestListener
 {
