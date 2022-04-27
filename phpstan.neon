@@ -37,6 +37,7 @@ parameters:
         analyseAndScan:
             - vendor/
             - var/
+            - ecs.php
     reportUnmatchedIgnoredErrors: false
     polluteScopeWithLoopInitialAssignments: false
     polluteScopeWithAlwaysIterableForeach: false
