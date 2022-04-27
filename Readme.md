@@ -59,7 +59,7 @@ class ExampleController extends AbstractController
 ```
 
 ## Предварительная обработка запроса до выполнения десериализации и валидации
-Для этого мы создадим EventListener и повесим его на событие `Kvarta\RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent`
+Для этого мы создадим EventListener и повесим его на событие `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent`
 
 ```php
 <?php
