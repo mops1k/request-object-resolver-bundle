@@ -58,7 +58,7 @@ class ExampleController extends AbstractController
 }
 ```
 
-## Предварительная обработка запроса до выполнения десериализации и валидации
+## Предварительная обработка запроса до выполнения десериализации
 Для этого мы создадим EventListener и повесим его на событие `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent`
 
 ```php
@@ -86,6 +86,36 @@ services:
     ExampleListener:
         tags:
             - { name: kernel.event_listener, event: 'RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent' }
+```
+
+## Предварительная обработка запроса до выполнения валидации
+Для этого мы создадим EventListener и повесим его на событие `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent`
+
+```php
+<?php
+
+use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+
+class ExampleListener
+{
+    public function beforeValidation(BeforeRequestObjectValidationEvent $event): void
+    {
+        $object = $event->getObject();
+        if (!is_a($object, ExampleRequest::class, true)) {
+            return;
+        }
+
+        // do some stuff before object going to validation
+        $object->id = 54; // example value
+    }
+}
+```
+
+```yaml
+services:
+    ExampleListener:
+        tags:
+            - { name: kernel.event_listener, event: 'RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent' }
 ```
 
 ## @TODO

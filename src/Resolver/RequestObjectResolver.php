@@ -4,6 +4,7 @@ namespace RequestObjectResolverBundle\Resolver;
 
 use Generator;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
+use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent;
 use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
@@ -59,6 +60,9 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
             );
 
             RequestNormalizeHelper::addFilesFromRequestToObject($request, $object);
+
+            $event = new BeforeRequestObjectValidationEvent($object);
+            $this->eventDispatcher->dispatch($event, BeforeRequestObjectValidationEvent::class);
 
             // проводим валидацию объекта
             $constraints = $this->validator->validate($object);
