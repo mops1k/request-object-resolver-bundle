@@ -14,6 +14,8 @@ use RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
 use RequestObjectResolverBundle\Tests\Fixtures\TestListener;
 use RequestObjectResolverBundle\Tests\Fixtures\TestNonAutoValidatedRequestModel;
 use RequestObjectResolverBundle\Tests\Fixtures\TestRequestModel;
+use RequestObjectResolverBundle\Tests\Fixtures\TestRequestModelWithGroup;
+use RequestObjectResolverBundle\ValidationGroupsInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -109,6 +111,45 @@ class RequestObjectResolverTest extends KernelTestCase
         static::assertEquals([], $requestObject->testFile);
 
         $resolverResult->next();
+    }
+
+    public function testWithGroupRequestResolveSuccess(): void
+    {
+        $arguments = new ArgumentMetadata('test', TestRequestModelWithGroup::class, false, false, null);
+        $request = Request::create(
+            '/?id=5',
+            Request::METHOD_GET,
+        );
+        static::assertTrue($this->resolver->supports($request, $arguments));
+
+        $resolverResult = $this->resolver->resolve($request, $arguments);
+        $requestObject = $resolverResult->current();
+        static::assertInstanceOf(RequestModelInterface::class, $requestObject);
+        static::assertInstanceOf(ValidationGroupsInterface::class, $requestObject);
+        static::assertInstanceOf(TestRequestModelWithGroup::class, $requestObject);
+
+        static::assertEquals(5, $requestObject->id);
+        static::assertEmpty($requestObject->test);
+    }
+
+    public function testWithGroupRequestResolveFail(): void
+    {
+        $arguments = new ArgumentMetadata('test', TestRequestModelWithGroup::class, false, false, null);
+        $request = Request::create(
+            '/?test=string',
+            Request::METHOD_GET,
+        );
+        static::assertTrue($this->resolver->supports($request, $arguments));
+
+        try {
+            $resolverResult = $this->resolver->resolve($request, $arguments);
+            $resolverResult->current();
+            static::fail('Expected exception not thrown.');
+        } catch (RequestObjectValidationFailHttpException $e) {
+            static::assertCount(1, $e->getErrors());
+            static::assertEquals(400, $e->getStatusCode());
+            static::assertStringContainsString('Request validation failed.', $e->getMessage());
+        }
     }
 
     /**

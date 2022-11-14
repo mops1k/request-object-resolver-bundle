@@ -164,3 +164,30 @@ class ExampleController extends AbstractController
     }
 }
 ```
+
+## Validation groups
+If you want to use validation groups, then implement `\RequestObjectResolverBundle\ValidationGroupsInterface`.
+
+Example:
+```php
+
+<?php
+
+use RequestObjectResolverBundle\ValidationGroupsInterface;
+
+class ExampleRequest implements ValidationGroupsInterface
+{
+    #[Assert\NotNull(groups: ['ExampleGroup'])]
+    #[Assert\GreaterThan(0)]
+    public ?int $id = null;
+    
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    public ?string $name = null;
+    
+    public static function validationGroups() : ?array
+    {
+        return ['ExampleGroup']
+    }
+}
+```

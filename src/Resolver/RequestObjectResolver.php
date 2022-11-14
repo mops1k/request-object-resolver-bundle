@@ -11,6 +11,7 @@ use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpExcept
 use RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
 use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
 use RequestObjectResolverBundle\RequestModelInterface;
+use RequestObjectResolverBundle\ValidationGroupsInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -18,6 +19,7 @@ use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use TypeError;
@@ -37,10 +39,11 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
     }
 
     /**
-     * @return Generator<RequestModelInterface>
+     * @throws \JsonException
      */
     public function resolve(Request $request, ArgumentMetadata $argument): Generator
     {
+        /** @var class-string<RequestModelInterface> $type */
         $type = $argument->getType();
 
         // т.к. это библиотека, то единственный способ безболезненно повлиять на десериализацию данных в объект - это создать событие до того, как она будет запущена
@@ -50,14 +53,16 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
 
         // десериализуем пришедший и обработанный запрос в объект
         try {
+            $context = [
+                AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
+                DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
+            ];
+
             $object = $this->serializer->deserialize(
                 json_encode($parameters, JSON_THROW_ON_ERROR),
                 $type,
                 'json',
-                [
-                    AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
-                    DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
-                ],
+                $context,
             );
 
             RequestNormalizeHelper::addFilesFromRequestToObject($request, $object);
@@ -66,8 +71,16 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
             $this->eventDispatcher->dispatch($event, BeforeRequestObjectValidationEvent::class);
 
             if (!$object instanceof NonAutoValidatedRequestModelInterface) {
+                $groups = null;
+                if (is_a($type, ValidationGroupsInterface::class, true)) {
+                    $groups = new GroupSequence($type::validationGroups());
+                }
+
                 // проводим валидацию объекта
-                $constraints = $this->validator->validate($object);
+                $constraints = $this->validator->validate(
+                    value: $object,
+                    groups: $groups
+                );
                 if (count($constraints) > 0) {
                     throw new RequestObjectValidationFailHttpException($constraints);
                 }
