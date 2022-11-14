@@ -187,7 +187,7 @@ class ExampleRequest implements ValidationGroupsInterface
     
     public static function validationGroups() : ?array
     {
-        return ['ExampleGroup']
+        return ['ExampleGroup'];
     }
 }
 ```
