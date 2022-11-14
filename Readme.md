@@ -1,26 +1,25 @@
 # RequestObjectResolverBundle
-Symfony библиотека, позволяющая десериализовать параметры запроса из объекта symfony в специально подготовленные объекты.
+This bundle can help you to deserialize incoming request parameters from symfomy http request object to your DTO objects.
 
-Десериализованные объекты проходят валидацию через [symfony/validator](https://symfony.com/doc/current/validation.html), поэтому при использовании таких объектов в
-контроллерах мы можем быть уверенны, что формат данных и их набор в объекте верны и готовы к дальнейшей обработке.
+Deserialized objects are validated via [symfony/validator](https://symfony.com/doc/current/validation.html), so when using such objects in
+controllers, we can be sure that the data format and their set in the object are correct and ready for further processing.
 
-Библиотека может десериализовать:
-- query параметры
-- параметры формы (parameters)
-- json тело запроса
-- загруженные файлы
-- параметры роутинга
-- куки (см. [RequestObjectResolverBundle\Http\RequestCookies](./src/Http/RequestCookies.php))
-- хедеры (см. [RequestObjectResolverBundle\Http\RequestHeaders](./src/Http/RequestHeaders.php))
+Bundle can deserialize:
+- query parameters
+- form parameters
+- json body
+- uploaded files
+- route parameters
+- cookies (see: [RequestObjectResolverBundle\Http\RequestCookies](./src/Http/RequestCookies.php))
+- headers (see: [RequestObjectResolverBundle\Http\RequestHeaders](./src/Http/RequestHeaders.php))
 
-## Установка
-1. Добавить в composer.json
+## Install
 ```bash
 composer require mops1k/request-object-resolver-bundle
 ```
 
-## Использование
-Пример:
+## Use
+Example:
 
 ```php
 <?php
@@ -48,7 +47,7 @@ class ExampleController extends AbstractController
     #[Route('/{id}', methods: [Request::METHOD_POST])]
     public function __invoke(ExampleRequest $exampleRequest): JsonResponse
     {
-        // какая-то логика работы с $exampleRequest
+        // some logic with $exampleRequest
         
         return new JsonResponse([
             'id' => $exampleRequest->id,
@@ -57,9 +56,9 @@ class ExampleController extends AbstractController
     }
 }
 ```
-
-## Предварительная обработка запроса до выполнения десериализации
-Для этого мы создадим EventListener и повесим его на событие `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent`
+## Events:
+### Event before request deserialization
+Event `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent`
 
 ```php
 <?php
@@ -88,8 +87,8 @@ services:
             - { name: kernel.event_listener, event: 'RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent' }
 ```
 
-## Предварительная обработка запроса до выполнения валидации
-Для этого мы создадим EventListener и повесим его на событие `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent`
+### Event before DTO validation
+Event `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent`
 
 ```php
 <?php
@@ -118,10 +117,11 @@ services:
             - { name: kernel.event_listener, event: 'RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent' }
 ```
 
-## Отключение автоматической валидации для объекта запроса
-Если в вашей логике не нужна автоматическая валидация объекта запроса по каким либо причинам, то вы можете отключить её
-для конкретного объекта. Для этого вам необходимо реализовать интерфейс `RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface`:
-Пример:
+## Disable concrete DTO validation
+If your logic does not need automatic validation of the request object for some reason, then you can disable it
+for a specific object. To do this, you need to implement the `RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface` interface.
+
+Example:
 
 ```php
 <?php
@@ -150,10 +150,10 @@ class ExampleController extends AbstractController
     #[Route('/{id}', methods: [Request::METHOD_POST])]
     public function __invoke(ExampleRequest $exampleRequest, ValidatorInterface $validator): JsonResponse
     {
-        // какая-то логика работы с $exampleRequest
+        //some logic with $exampleRequest
         $exampleRequest->id ??= 1;
 
-        // выполнение валидации вручную после манипуляций с объектом
+        // run validation when you need it
         $violationList = $validator->validate($exampleRequest);
         // ...
 
@@ -164,8 +164,3 @@ class ExampleController extends AbstractController
     }
 }
 ```
-
-
-
-## @TODO
-- [ ] добавить валидацию для объектов cookies
