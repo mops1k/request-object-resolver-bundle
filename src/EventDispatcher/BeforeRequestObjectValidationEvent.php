@@ -13,9 +13,7 @@ class BeforeRequestObjectValidationEvent extends Event
     {
     }
 
-    /**
-     * @return RequestModelInterface
-     */
+    
     public function getObject(): RequestModelInterface
     {
         return $this->object;

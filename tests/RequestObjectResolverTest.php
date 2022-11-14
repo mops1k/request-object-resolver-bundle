@@ -7,10 +7,12 @@ use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEv
 use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
+use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
 use RequestObjectResolverBundle\RequestModelInterface;
 use RequestObjectResolverBundle\Resolver\RequestObjectResolver;
 use RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
 use RequestObjectResolverBundle\Tests\Fixtures\TestListener;
+use RequestObjectResolverBundle\Tests\Fixtures\TestNonAutoValidatedRequestModel;
 use RequestObjectResolverBundle\Tests\Fixtures\TestRequestModel;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -82,6 +84,29 @@ class RequestObjectResolverTest extends KernelTestCase
         static::assertEquals('test_query_value', $requestObject->testQuery);
         static::assertCount(1, $requestObject->testFile);
         static::assertInstanceOf(UploadedFile::class, $requestObject->testFile[0]);
+
+        $resolverResult->next();
+    }
+
+    public function testNonAutoValidatedRequestResolveSuccess(): void
+    {
+        $arguments = new ArgumentMetadata('test', TestNonAutoValidatedRequestModel::class, false, false, null);
+        $request = Request::create(
+            '/',
+            Request::METHOD_GET,
+        );
+        static::assertTrue($this->resolver->supports($request, $arguments));
+
+        $resolverResult = $this->resolver->resolve($request, $arguments);
+        $requestObject = $resolverResult->current();
+        static::assertInstanceOf(RequestModelInterface::class, $requestObject);
+        static::assertInstanceOf(NonAutoValidatedRequestModelInterface::class, $requestObject);
+        static::assertInstanceOf(TestNonAutoValidatedRequestModel::class, $requestObject);
+
+        static::assertNull($requestObject->test);
+        static::assertNull($requestObject->testJson);
+        static::assertNull($requestObject->testQuery);
+        static::assertEquals([], $requestObject->testFile);
 
         $resolverResult->next();
     }

@@ -118,5 +118,54 @@ services:
             - { name: kernel.event_listener, event: 'RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent' }
 ```
 
+## Отключение автоматической валидации для объекта запроса
+Если в вашей логике не нужна автоматическая валидация объекта запроса по каким либо причинам, то вы можете отключить её
+для конкретного объекта. Для этого вам необходимо реализовать интерфейс `RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface`:
+Пример:
+
+```php
+<?php
+
+use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+class ExampleRequest implements NonAutoValidatedRequestModelInterface
+{
+    #[Assert\NotNull]
+    #[Assert\GreaterThan(0)]
+    public ?int $id = null;
+    
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    public ?string $name = null;
+}
+
+class ExampleController extends AbstractController
+{
+    #[Route('/{id}', methods: [Request::METHOD_POST])]
+    public function __invoke(ExampleRequest $exampleRequest, ValidatorInterface $validator): JsonResponse
+    {
+        // какая-то логика работы с $exampleRequest
+        $exampleRequest->id ??= 1;
+
+        // выполнение валидации вручную после манипуляций с объектом
+        $violationList = $validator->validate($exampleRequest);
+        // ...
+
+        return new JsonResponse([
+            'id' => $exampleRequest->id,
+            'name' => $exampleRequest->name,
+        ]);
+    }
+}
+```
+
+
+
 ## @TODO
 - [ ] добавить валидацию для объектов cookies

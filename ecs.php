@@ -61,25 +61,19 @@ use PhpCsFixer\Fixer\StringNotation\SingleQuoteFixer;
 use PhpCsFixer\Fixer\Whitespace\BlankLineBeforeStatementFixer;
 use PhpCsFixer\Fixer\Whitespace\NoSpacesAroundOffsetFixer;
 use PhpCsFixer\Fixer\Whitespace\TypesSpacesFixer;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symplify\EasyCodingStandard\ValueObject\Option;
+use Symplify\EasyCodingStandard\Config\ECSConfig;
 use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $parameters = $containerConfigurator->parameters();
-    $parallel = !isset($_SERVER['CI']) || $_SERVER['CI'] !== 'true';
-    $parameters->set(Option::PARALLEL, $parallel);
-
-    $parameters->set(Option::PATHS, [
+return static function (EcsConfig $config): void {
+    $config->paths([
         __DIR__ . '/src',
         __DIR__ . '/tests',
         __DIR__ . '/ecs.php',
     ]);
 
-    $containerConfigurator->import(SetList::PSR_12);
-    $containerConfigurator->import(SetList::DOCTRINE_ANNOTATIONS);
+    $config->sets([SetList::PSR_12, SetList::DOCTRINE_ANNOTATIONS]);
 
-    $services = $containerConfigurator->services();
+    $services = $config->services();
     $services->set(NoAliasFunctionsFixer::class);
     $services->set(NoAliasLanguageConstructCallFixer::class);
     $services->set(NoMixedEchoPrintFixer::class);
@@ -117,7 +111,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(PhpUnitConstructFixer::class);
     $services->set(PhpUnitDedicateAssertFixer::class);
     $services->set(PhpUnitDedicateAssertInternalTypeFixer::class);
-    // $services->set(PhpUnitExpectationFixer::class); // todo: https://github.com/symplify/symplify/issues/3446
+    $services->set(PhpUnitExpectationFixer::class);
     $services->set(NoBlankLinesAfterPhpdocFixer::class);
     $services->set(NoEmptyPhpdocFixer::class);
     $services->set(NoSuperfluousPhpdocTagsFixer::class)->call('configure', [['allow_mixed' => true]]);
@@ -138,8 +132,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(BlankLineBeforeStatementFixer::class);
     $services->set(TrailingCommaInMultilineFixer::class)->call('configure', [['elements' => ['arrays', 'parameters']]]);
 
-    // какая-то хуйня с юнион типами, фиксер глючит, а мне лень копаться. Вырубаем пайпы у BinaryOperatorSpacesFixer
-    // https://github.com/FriendsOfPHP/PHP-CS-Fixer/issues/5495
-    $services->get(BinaryOperatorSpacesFixer::class)->call('configure', [['operators' => ['|' => null]]]);
+    $services->get(BinaryOperatorSpacesFixer::class);
     $services->set(TypesSpacesFixer::class);
 };

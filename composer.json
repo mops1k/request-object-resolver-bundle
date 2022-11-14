@@ -19,7 +19,7 @@
     "phpunit/php-code-coverage": "^9.2",
     "phpunit/phpunit": "^9.5",
     "roave/security-advisories": "dev-latest",
-    "symplify/easy-coding-standard": "^10.0"
+    "symplify/easy-coding-standard": "^11.1"
   },
   "autoload": {
     "psr-4": {

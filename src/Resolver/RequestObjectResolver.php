@@ -9,6 +9,7 @@ use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpExcep
 use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
+use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
 use RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
@@ -64,10 +65,12 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
             $event = new BeforeRequestObjectValidationEvent($object);
             $this->eventDispatcher->dispatch($event, BeforeRequestObjectValidationEvent::class);
 
-            // проводим валидацию объекта
-            $constraints = $this->validator->validate($object);
-            if (count($constraints) > 0) {
-                throw new RequestObjectValidationFailHttpException($constraints);
+            if (!$object instanceof NonAutoValidatedRequestModelInterface) {
+                // проводим валидацию объекта
+                $constraints = $this->validator->validate($object);
+                if (count($constraints) > 0) {
+                    throw new RequestObjectValidationFailHttpException($constraints);
+                }
             }
 
             yield $object;
