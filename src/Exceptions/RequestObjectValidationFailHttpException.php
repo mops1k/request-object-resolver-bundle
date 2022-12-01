@@ -14,11 +14,17 @@ class RequestObjectValidationFailHttpException extends BadRequestHttpException
     protected array $errors = [];
 
     /**
+     * @var ConstraintViolationListInterface<ConstraintViolationInterface>
+     */
+    protected ConstraintViolationListInterface $constraints;
+
+    /**
      * @param array<mixed> $headers
      */
     public function __construct(ConstraintViolationListInterface $constraints, \Throwable $previous = null, int $code = 0, array $headers = [])
     {
         $errorMessages = [];
+        $this->constraints = $constraints;
         /** @var ConstraintViolationInterface $constraint */
         foreach ($constraints as $constraint) {
             $this->errors[] = [
@@ -42,5 +48,13 @@ class RequestObjectValidationFailHttpException extends BadRequestHttpException
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    /**
+     * @return ConstraintViolationListInterface<ConstraintViolationInterface>
+     */
+    public function getConstraints(): ConstraintViolationListInterface
+    {
+        return $this->constraints;
     }
 }
