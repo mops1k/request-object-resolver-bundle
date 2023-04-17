@@ -2,6 +2,9 @@
 
 namespace RequestObjectResolverBundle\Http;
 
+/**
+ * @deprecated
+ */
 class RequestCookies
 {
     /**

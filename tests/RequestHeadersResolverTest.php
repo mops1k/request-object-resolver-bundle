@@ -12,6 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
+/**
+ * @deprecated
+ */
 class RequestHeadersResolverTest extends KernelTestCase
 {
     private RequestHeadersResolver $resolver;

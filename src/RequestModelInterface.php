@@ -2,6 +2,9 @@
 
 namespace RequestObjectResolverBundle;
 
+/**
+ * @deprecated
+ */
 interface RequestModelInterface
 {
 }

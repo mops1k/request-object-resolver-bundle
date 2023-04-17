@@ -7,6 +7,9 @@ namespace RequestObjectResolverBundle\Tests\Fixtures;
 use RequestObjectResolverBundle\ValidationGroupsInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @deprecated
+ */
 class TestRequestModelWithGroup implements ValidationGroupsInterface
 {
     #[Assert\NotNull(groups: ['Test'])]

@@ -24,6 +24,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use TypeError;
 
+/**
+ * @deprecated
+ */
 final class RequestObjectResolver implements ArgumentValueResolverInterface
 {
     public function __construct(
@@ -35,6 +38,8 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
+        @trigger_deprecation('mops1k/request-object-resolver-bundle', '1.1.0', '%s are deprecated and will be removed since 1.2.0', RequestModelInterface::class);
+
         return is_a($argument->getType(), RequestModelInterface::class, true);
     }
 

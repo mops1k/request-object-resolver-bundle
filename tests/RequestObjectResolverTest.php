@@ -3,6 +3,7 @@
 namespace RequestObjectResolverBundle\Tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
@@ -28,6 +29,9 @@ use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
+/**
+ * @deprecated
+ */
 class RequestObjectResolverTest extends KernelTestCase
 {
     private RequestObjectResolver $resolver;
@@ -60,9 +64,7 @@ class RequestObjectResolverTest extends KernelTestCase
         $reflection->setValue($this->resolver, $this->dispatcher);
     }
 
-    /**
-     * @dataProvider requestResolveSuccessParametersProvider
-     */
+    #[DataProvider('requestResolveSuccessParametersProvider')]
     public function testRequestResolveSuccess(mixed $parameter, string $expectedValue): void
     {
         $arguments = new ArgumentMetadata('test', TestRequestModel::class, false, false, null);
@@ -155,7 +157,7 @@ class RequestObjectResolverTest extends KernelTestCase
     /**
      * @return iterable<array<mixed>>
      */
-    public function requestResolveSuccessParametersProvider(): iterable
+    public static function requestResolveSuccessParametersProvider(): iterable
     {
         yield 'test with int' => ['parameter' => 1, 'expectedValue' => '1'];
         yield 'test with string' => ['parameter' => 'test_value', 'expectedValue' => 'test_value'];
@@ -216,10 +218,7 @@ class RequestObjectResolverTest extends KernelTestCase
         $resolverResult->next();
     }
 
-
-    /**
-     * @dataProvider requestResolveFailParametersProvider
-     */
+    #[DataProvider('requestResolveFailParametersProvider')]
     public function testRequestResolveFail(mixed $parameter, string $expectedExceptionMessage): void
     {
         $arguments = new ArgumentMetadata('test', TestRequestModel::class, false, false, null);
@@ -251,7 +250,7 @@ class RequestObjectResolverTest extends KernelTestCase
     /**
      * @return iterable<array<mixed>>
      */
-    public function requestResolveFailParametersProvider(): iterable
+    public static function requestResolveFailParametersProvider(): iterable
     {
         yield 'test with string' => ['parameter' => 'test_value', 'expectedExceptionMessage' => 'Request validation failed.'];
         yield 'test with null' => ['parameter' => null, 'expectedExceptionMessage' => 'Passed a value with type null, expected type string'];

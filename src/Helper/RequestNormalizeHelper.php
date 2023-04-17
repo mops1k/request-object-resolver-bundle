@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 final class RequestNormalizeHelper
 {

@@ -5,13 +5,11 @@ Deserialized objects are validated via [symfony/validator](https://symfony.com/d
 controllers, we can be sure that the data format and their set in the object are correct and ready for further processing.
 
 Bundle can deserialize:
-- query parameters
+- route parameters (attribute `RequestObjectResolverBundle\Attribute\Path`)
+- query parameters (attribute `RequestObjectResolverBundle\Attribute\Query`)
+- content body (supports all symfony serializer formats)  (attribute `RequestObjectResolverBundle\Attribute\Content`)
 - form parameters
-- json body
 - uploaded files
-- route parameters
-- cookies (see: [RequestObjectResolverBundle\Http\RequestCookies](./src/Http/RequestCookies.php))
-- headers (see: [RequestObjectResolverBundle\Http\RequestHeaders](./src/Http/RequestHeaders.php))
 
 ## Install
 ```bash
@@ -24,14 +22,15 @@ Example:
 ```php
 <?php
 
-use RequestObjectResolverBundle\RequestModelInterface;
+use RequestObjectResolverBundle\Attribute\Query;
+use RequestObjectResolverBundle\Attribute\Path;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ExampleRequest implements RequestModelInterface
+class ExampleRequest
 {
     #[Assert\NotNull]
     #[Assert\GreaterThan(0)]
@@ -42,10 +41,13 @@ class ExampleRequest implements RequestModelInterface
     public ?string $name = null;
 }
 
+/**
+ * Request path example: /25?name=Julian
+ */
 class ExampleController extends AbstractController
 {
-    #[Route('/{id}', methods: [Request::METHOD_POST])]
-    public function __invoke(ExampleRequest $exampleRequest): JsonResponse
+    #[Route('/{id}', methods: [Request::METHOD_GET])]
+    public function __invoke(#[Query, Path] ExampleRequest $exampleRequest): JsonResponse
     {
         // some logic with $exampleRequest
         
@@ -56,85 +58,71 @@ class ExampleController extends AbstractController
     }
 }
 ```
-## Events:
-### Event before request deserialization
-Event `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent`
 
-```php
-<?php
-
-use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
-
-class ExampleListener
-{
-    public function beforeDeserialization(BeforeRequestObjectDeserializeEvent $event): void
-    {
-        if (!is_a($event->getObjectToResolve(), ExampleRequest::class, true)) {
-            return;
-        }
-
-        $parameters = $event->getResolvedParameters();
-        $parameters['example'] ??= 'example_value_modified';
-        $event->setResolvedParameters($parameters);
-    }
-}
-```
-
-```yaml
-services:
-    ExampleListener:
-        tags:
-            - { name: kernel.event_listener, event: 'RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent' }
-```
-
-### Event before DTO validation
-Event `RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent`
-
-```php
-<?php
-
-use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
-
-class ExampleListener
-{
-    public function beforeValidation(BeforeRequestObjectValidationEvent $event): void
-    {
-        $object = $event->getObject();
-        if (!is_a($object, ExampleRequest::class, true)) {
-            return;
-        }
-
-        // do some stuff before object going to validation
-        $object->id = 54; // example value
-    }
-}
-```
-
-```yaml
-services:
-    ExampleListener:
-        tags:
-            - { name: kernel.event_listener, event: 'RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent' }
-```
-
-## Disable concrete DTO validation
-If your logic does not need automatic validation of the request object for some reason, then you can disable it
-for a specific object. To do this, you need to implement the `RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface` interface.
+## Map field to another name
+Whole library attributes have a map parameter. With this parameter you can map from one field name to another.
 
 Example:
 
 ```php
 <?php
 
-use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
+use RequestObjectResolverBundle\Attribute\Query;
+use RequestObjectResolverBundle\Attribute\Path;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ExampleRequest implements NonAutoValidatedRequestModelInterface
+class ExampleRequest
+{
+    #[Assert\NotNull]
+    #[Assert\GreaterThan(0)]
+    public ?int $id = null;
+    
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    public ?string $title = null;
+}
+
+/**
+ * Request path example: /25?name=Julian
+ */
+class ExampleController extends AbstractController
+{
+    #[Route('/{id}', methods: [Request::METHOD_GET])]
+    public function __invoke(#[Query(map: ['name' => 'title']), Path] ExampleRequest $exampleRequest): JsonResponse
+    {
+        // some logic with $exampleRequest
+        
+        return new JsonResponse([
+            'id' => $exampleRequest->id,
+            'title' => $exampleRequest->name,
+        ]);
+    }
+}
+```
+
+## Skip dto validation
+If your logic does not need automatic validation of the request object for some reason, then you can disable it
+with `RequestObjectResolverBundle\Attribute\SkipValidation` attribute.
+
+Example:
+
+```php
+<?php
+
+use RequestObjectResolverBundle\Attribute\Query;
+use RequestObjectResolverBundle\Attribute\Path;
+use RequestObjectResolverBundle\Attribute\SkipValidation;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints as Assert;
+
+class ExampleRequest
 {
     #[Assert\NotNull]
     #[Assert\GreaterThan(0)]
@@ -145,18 +133,16 @@ class ExampleRequest implements NonAutoValidatedRequestModelInterface
     public ?string $name = null;
 }
 
+/**
+ * Request path example: /-1?name=
+ */
 class ExampleController extends AbstractController
 {
-    #[Route('/{id}', methods: [Request::METHOD_POST])]
-    public function __invoke(ExampleRequest $exampleRequest, ValidatorInterface $validator): JsonResponse
+    #[Route('/{id}', methods: [Request::METHOD_GET])]
+    public function __invoke(#[Query, Path, SkipValidation] ExampleRequest $exampleRequest): JsonResponse
     {
-        //some logic with $exampleRequest
-        $exampleRequest->id ??= 1;
-
-        // run validation when you need it
-        $violationList = $validator->validate($exampleRequest);
-        // ...
-
+        // some logic with $exampleRequest
+        
         return new JsonResponse([
             'id' => $exampleRequest->id,
             'name' => $exampleRequest->name,
@@ -166,28 +152,47 @@ class ExampleController extends AbstractController
 ```
 
 ## Validation groups
-If you want to use validation groups, then implement `\RequestObjectResolverBundle\ValidationGroupsInterface`.
+If you want to use validation groups, then use attribute `\RequestObjectResolverBundle\Attribute\ValidationGroups`.
 
 Example:
-```php
 
+```php
 <?php
 
-use RequestObjectResolverBundle\ValidationGroupsInterface;
+use RequestObjectResolverBundle\Attribute\Query;
+use RequestObjectResolverBundle\Attribute\Path;
+use RequestObjectResolverBundle\Attribute\ValidationGroups;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints as Assert;
 
-class ExampleRequest implements ValidationGroupsInterface
+class ExampleRequest
 {
-    #[Assert\NotNull(groups: ['ExampleGroup'])]
-    #[Assert\GreaterThan(0)]
+    #[Assert\NotNull]
+    #[Assert\GreaterThan(0, groups: ['default'])]
     public ?int $id = null;
     
     #[Assert\NotNull]
     #[Assert\NotBlank]
     public ?string $name = null;
-    
-    public static function validationGroups() : ?array
+}
+
+/**
+ * Request path example: /25?name=Julian
+ */
+class ExampleController extends AbstractController
+{
+    #[Route('/{id}', methods: [Request::METHOD_POST])]
+    public function __invoke(#[Query, Path, ValidationGroups(groups: 'default')] ExampleRequest $exampleRequest): JsonResponse
     {
-        return ['ExampleGroup'];
+        // some logic with $exampleRequest
+        
+        return new JsonResponse([
+            'id' => $exampleRequest->id,
+            'name' => $exampleRequest->name,
+        ]);
     }
 }
 ```

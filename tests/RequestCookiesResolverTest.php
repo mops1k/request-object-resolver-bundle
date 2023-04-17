@@ -9,6 +9,9 @@ use RequestObjectResolverBundle\Resolver\RequestCookiesResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
+/**
+ * @deprecated
+ */
 class RequestCookiesResolverTest extends TestCase
 {
     public function testResolveCookiesSuccess(): void

@@ -8,6 +8,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
+/**
+ * @deprecated
+ */
 class TestNonAutoValidatedRequestModel implements NonAutoValidatedRequestModelInterface
 {
     public ?string $test = null;

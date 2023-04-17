@@ -4,6 +4,9 @@ namespace RequestObjectResolverBundle\Tests\Fixtures;
 
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 
+/**
+ * @deprecated
+ */
 class TestListener
 {
     public function beforeDeserialization(BeforeRequestObjectDeserializeEvent $event): void

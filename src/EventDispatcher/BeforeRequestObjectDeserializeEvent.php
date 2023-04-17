@@ -5,6 +5,9 @@ namespace RequestObjectResolverBundle\EventDispatcher;
 use RequestObjectResolverBundle\RequestModelInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * @deprecated
+ */
 class BeforeRequestObjectDeserializeEvent extends Event
 {
     /**

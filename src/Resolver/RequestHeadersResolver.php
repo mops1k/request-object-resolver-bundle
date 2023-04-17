@@ -10,6 +10,9 @@ use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * @deprecated
+ */
 final class RequestHeadersResolver implements ArgumentValueResolverInterface
 {
     public function __construct(private ValidatorInterface $validator)
