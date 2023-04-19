@@ -5,52 +5,35 @@ namespace RequestObjectResolverBundle\Resolver;
 use RequestObjectResolverBundle\Attribute\Path;
 use RequestObjectResolverBundle\Attribute\SkipValidation;
 use RequestObjectResolverBundle\Attribute\ValidationGroups;
-use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
-use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
+use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\SerializerNotFound;
+use RequestObjectResolverBundle\Exceptions\TypeDoesNotExists;
+use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class RequestPathResolver extends AbstractRequestResolver
 {
-    public function __construct(
-        private SerializerInterface $serializer,
-        private ValidatorInterface $validator,
-    ) {
-        parent::__construct($this->validator);
-    }
+    protected ?string $attributeClass = Path::class;
 
     /**
      * @return iterable<object>
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        $data = $request->attributes->get('_route_params', []);
-        if (count($data) === 0) {
-            return [];
-        }
-
         $type = $argument->getType();
-        if (null === $type) {
-            return [];
+        if (null === $type || !class_exists($type)) {
+            throw new TypeDoesNotExists();
         }
 
-        if (!class_exists($type)) {
-            return [];
-        }
-
-        $pathAttributes = $argument->getAttributesOfType(Path::class, ArgumentMetadata::IS_INSTANCEOF);
-        if (count($pathAttributes) === 0) {
-            return [];
-        }
+        $data = $request->attributes->get('_route_params', []);
 
         if (!$this->serializer instanceof Serializer) {
-            return [];
+            throw new SerializerNotFound();
         }
 
         $pathFieldsMapping = [];
@@ -108,7 +91,7 @@ final class RequestPathResolver extends AbstractRequestResolver
                 // $propertyPath может быть не точным (из-за SerializedName), но больше у нас ничего нет
                 [, $actualType, $propertyPath, $expectedType] = $matches;
 
-                throw new RequestObjectTypeErrorHttpException($propertyPath, $actualType, $expectedType);
+                throw new TypeErrorHttpException($propertyPath, $actualType, $expectedType);
             }
 
             throw $error;
@@ -118,7 +101,7 @@ final class RequestPathResolver extends AbstractRequestResolver
                 $errors[] = (string)$error->getMessage();
             }
 
-            throw new RequestObjectDeserializationHttpException($errors, $exception);
+            throw new ObjectDeserializationHttpException($errors, $exception);
         }
 
         if ($skipValidation) {

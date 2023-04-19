@@ -3,14 +3,44 @@
 namespace RequestObjectResolverBundle\Resolver;
 
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
-use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-abstract class AbstractRequestResolver implements ValueResolverInterface
+abstract class AbstractRequestResolver implements ArgumentValueResolverInterface
 {
-    public function __construct(private ValidatorInterface $validator)
+    protected ?string $attributeClass = null;
+
+    public function __construct(
+        protected SerializerInterface $serializer,
+        protected ValidatorInterface $validator,
+    ) {
+    }
+
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
+        if (!$this->attributeClass) {
+            return false;
+        }
+
+        $type = $argument->getType();
+        if (null === $type) {
+            return false;
+        }
+
+        if (!class_exists($type)) {
+            return false;
+        }
+
+        $contentAttributes = $argument->getAttributes($this->attributeClass, ArgumentMetadata::IS_INSTANCEOF);
+        if (count($contentAttributes) > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

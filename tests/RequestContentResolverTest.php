@@ -5,7 +5,7 @@ namespace RequestObjectResolverBundle\Tests;
 use Doctrine\Common\Annotations\AnnotationReader;
 use RequestObjectResolverBundle\Attribute\Content;
 use RequestObjectResolverBundle\Attribute\SkipValidation;
-use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Resolver\RequestContentResolver;
 use RequestObjectResolverBundle\Tests\Fixtures\Content\TestContentModel;
@@ -166,7 +166,7 @@ class RequestContentResolverTest extends KernelTestCase
             content: \json_encode(['test' => '', 'test_bool' => null], JSON_THROW_ON_ERROR),
         );
 
-        self::expectException(RequestObjectDeserializationHttpException::class);
+        self::expectException(ObjectDeserializationHttpException::class);
         $this->resolver->resolve($request, $argument);
     }
 }

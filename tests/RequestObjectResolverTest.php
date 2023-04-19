@@ -5,8 +5,8 @@ namespace RequestObjectResolverBundle\Tests;
 use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
-use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
-use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
+use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
 use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
 use RequestObjectResolverBundle\RequestModelInterface;
@@ -238,11 +238,11 @@ class RequestObjectResolverTest extends KernelTestCase
             static::assertCount(2, $e->getErrors());
             static::assertEquals(400, $e->getStatusCode());
             static::assertStringContainsString($expectedExceptionMessage, $e->getMessage());
-        } catch (RequestObjectTypeErrorHttpException $e) {
+        } catch (TypeErrorHttpException $e) {
             static::assertEquals('test', $e->getField());
             static::assertEquals($expectedExceptionMessage, $e->getMessage());
             static::assertEquals(400, $e->getStatusCode());
-        } catch (RequestObjectDeserializationHttpException $e) {
+        } catch (ObjectDeserializationHttpException $e) {
             static::assertEquals(400, $e->getStatusCode());
         }
     }

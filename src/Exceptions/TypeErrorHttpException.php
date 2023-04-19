@@ -4,7 +4,7 @@ namespace RequestObjectResolverBundle\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class RequestObjectTypeErrorHttpException extends BadRequestHttpException
+class TypeErrorHttpException extends BadRequestHttpException
 {
     /**
      * @param array<mixed> $headers

@@ -5,7 +5,7 @@ namespace RequestObjectResolverBundle\Tests;
 use Doctrine\Common\Annotations\AnnotationReader;
 use RequestObjectResolverBundle\Attribute\Path;
 use RequestObjectResolverBundle\Attribute\SkipValidation;
-use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Resolver\RequestPathResolver;
 use RequestObjectResolverBundle\Tests\Fixtures\Path\TestPathModel;
@@ -165,7 +165,7 @@ class RequestPathResolverTest extends KernelTestCase
         );
         $request->attributes->set('_route_params', ['object' => null]);
 
-        self::expectException(RequestObjectDeserializationHttpException::class);
+        self::expectException(ObjectDeserializationHttpException::class);
         $resolverResult = $this->resolver->resolve($request, $argument);
 
         $requestObject = $resolverResult[0] ?? null;

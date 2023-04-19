@@ -5,8 +5,8 @@ namespace RequestObjectResolverBundle\Resolver;
 use Generator;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent;
-use RequestObjectResolverBundle\Exceptions\RequestObjectDeserializationHttpException;
-use RequestObjectResolverBundle\Exceptions\RequestObjectTypeErrorHttpException;
+use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
 use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
@@ -101,7 +101,7 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
                 // $propertyPath может быть не точным (из-за SerializedName), но больше у нас ничего нет
                 [, $actualType, $propertyPath, $expectedType] = $matches;
 
-                throw new RequestObjectTypeErrorHttpException($propertyPath, $actualType, $expectedType);
+                throw new TypeErrorHttpException($propertyPath, $actualType, $expectedType);
             }
 
             throw $error;
@@ -111,7 +111,7 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
                 $errors[] = (string)$error;
             }
 
-            throw new RequestObjectDeserializationHttpException($errors);
+            throw new ObjectDeserializationHttpException($errors);
         }
     }
 }
