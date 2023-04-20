@@ -3,7 +3,7 @@
 namespace RequestObjectResolverBundle\Attribute;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-final class Path
+final class Path implements RequestAttribute
 {
     /**
      * @param array<string, string> $map

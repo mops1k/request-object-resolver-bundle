@@ -1,71 +1,47 @@
 <?php
 
-namespace RequestObjectResolverBundle\Resolver;
+namespace RequestObjectResolverBundle\Chain;
 
-use RequestObjectResolverBundle\Attribute\Path;
-use RequestObjectResolverBundle\Attribute\SkipValidation;
-use RequestObjectResolverBundle\Attribute\ValidationGroups;
+use RequestObjectResolverBundle\Attribute\Query;
 use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
 use RequestObjectResolverBundle\Exceptions\SerializerNotFound;
-use RequestObjectResolverBundle\Exceptions\TypeDoesNotExists;
 use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
-final class RequestPathResolver extends AbstractRequestResolver
+final class QueryResolver implements ResolverInterface
 {
-    protected ?string $attributeClass = Path::class;
-
-    /**
-     * @return iterable<object>
-     */
-    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    public function __construct(private SerializerInterface $serializer)
     {
-        $type = $argument->getType();
-        if (null === $type || !class_exists($type)) {
-            throw new TypeDoesNotExists();
-        }
+    }
 
-        $data = $request->attributes->get('_route_params', []);
-
+    public function resolve(Request $request, ArgumentMetadata $metadata, ?object $object = null): ?object
+    {
         if (!$this->serializer instanceof Serializer) {
             throw new SerializerNotFound();
         }
 
-        $pathFieldsMapping = [];
-        $validationGroups = [];
-        $skipValidation = false;
+        $type = $metadata->getType();
+        $data = $request->query->all();
+        $fieldsMapping = [];
 
-        $attributes = $argument->getAttributes();
+        $attributes = $metadata->getAttributes();
         foreach ($attributes as $attribute) {
-            if ($attribute instanceof Path) {
-                $pathFieldsMapping = array_merge_recursive($pathFieldsMapping, $attribute->getMap());
-
-                continue;
-            }
-
-            if ($attribute instanceof ValidationGroups) {
-                if (null === $attribute->getGroups()) {
-                    continue;
-                }
-                $validationGroups = array_merge_recursive($validationGroups, $attribute->getGroups());
-
-                continue;
-            }
-
-            if ($attribute instanceof SkipValidation) {
-                $skipValidation = true;
+            if ($attribute instanceof Query) {
+                $fieldsMapping = array_merge_recursive($fieldsMapping, $attribute->getMap());
             }
         }
 
-        if (count($pathFieldsMapping) > 0) {
+        if (count($fieldsMapping) > 0) {
             foreach ($data as $name => $value) {
-                if (array_key_exists($name, $pathFieldsMapping)) {
-                    $data[$pathFieldsMapping[$name]] = $value;
+                if (array_key_exists($name, $fieldsMapping)) {
+                    $data[$fieldsMapping[$name]] = $value;
                     unset($data[$name]);
                 }
             }
@@ -75,6 +51,9 @@ final class RequestPathResolver extends AbstractRequestResolver
             AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
             DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
         ];
+        if (null !== $object) {
+            $context[AbstractNormalizer::OBJECT_TO_POPULATE] = $object;
+        }
 
         try {
             $object = $this->serializer->denormalize(
@@ -104,12 +83,13 @@ final class RequestPathResolver extends AbstractRequestResolver
             throw new ObjectDeserializationHttpException($errors, $exception);
         }
 
-        if ($skipValidation) {
-            return [$object];
-        }
+        return $object;
+    }
 
-        $this->validate($object, $validationGroups);
+    public function supports(ArgumentMetadata $argumentMetadata): bool
+    {
+        $attributes = $argumentMetadata->getAttributes(Query::class, ArgumentMetadata::IS_INSTANCEOF);
 
-        return [$object];
+        return count($attributes) > 0;
     }
 }

@@ -5,7 +5,7 @@ namespace RequestObjectResolverBundle\Attribute;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-final class Content
+final class Content implements RequestAttribute
 {
     /**
      * @param array<string, string> $map

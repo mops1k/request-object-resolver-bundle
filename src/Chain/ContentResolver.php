@@ -1,12 +1,9 @@
 <?php
 
-namespace RequestObjectResolverBundle\Resolver;
+namespace RequestObjectResolverBundle\Chain;
 
 use RequestObjectResolverBundle\Attribute\Content;
-use RequestObjectResolverBundle\Attribute\SkipValidation;
-use RequestObjectResolverBundle\Attribute\ValidationGroups;
 use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
-use RequestObjectResolverBundle\Exceptions\TypeDoesNotExists;
 use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -15,54 +12,26 @@ use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class RequestContentResolver extends AbstractRequestResolver
+final class ContentResolver implements ResolverInterface
 {
-    protected ?string $attributeClass = Content::class;
-
-    /**
-     * @return iterable<object>
-     */
-    public function resolve(Request $request, ArgumentMetadata $argument): iterable
+    public function __construct(private SerializerInterface $serializer)
     {
-        $type = $argument->getType();
-        if (null === $type || !class_exists($type)) {
-            throw new TypeDoesNotExists();
-        }
+    }
 
-        $contentAttributes = $argument->getAttributes($this->attributeClass, ArgumentMetadata::IS_INSTANCEOF);
-        if (count($contentAttributes) === 0) {
-            return [null];
-        }
-
+    public function resolve(Request $request, ArgumentMetadata $metadata, ?object $object = null): ?object
+    {
+        $type = $metadata->getType();
         $format = null;
-        $contentFieldsMapping = [];
-        $validationGroups = [];
-        $skipValidation = false;
+        $fieldsMapping = [];
 
-        $attributes = $argument->getAttributes();
+        $attributes = $metadata->getAttributes();
         foreach ($attributes as $attribute) {
             if ($attribute instanceof Content) {
-                $contentFieldsMapping = array_merge_recursive($contentFieldsMapping, $attribute->getMap());
+                $fieldsMapping = array_merge_recursive($fieldsMapping, $attribute->getMap());
                 if (null === $format) {
                     $format = $attribute->getFormat();
                 }
-
-                continue;
-            }
-
-            if ($attribute instanceof ValidationGroups) {
-                if (null === $attribute->getGroups()) {
-                    continue;
-                }
-                $validationGroups = array_merge_recursive($validationGroups, $attribute->getGroups());
-
-                continue;
-            }
-
-            if ($attribute instanceof SkipValidation) {
-                $skipValidation = true;
             }
         }
 
@@ -72,15 +41,15 @@ final class RequestContentResolver extends AbstractRequestResolver
         ];
 
         $content = $request->getContent();
-        if (count($contentFieldsMapping) > 0 && $this->serializer instanceof Serializer) {
+        if (count($fieldsMapping) > 0 && $this->serializer instanceof Serializer) {
             $decoded = $this->serializer->decode($content, $format, $context);
             if (is_array($decoded)) {
                 foreach ($decoded as $name => $value) {
-                    if (!\array_key_exists($name, $contentFieldsMapping)) {
+                    if (!\array_key_exists($name, $fieldsMapping)) {
                         continue;
                     }
 
-                    $decoded[$contentFieldsMapping[$name]] = $value;
+                    $decoded[$fieldsMapping[$name]] = $value;
                     unset($decoded[$name]);
                 }
             }
@@ -112,12 +81,13 @@ final class RequestContentResolver extends AbstractRequestResolver
             throw new ObjectDeserializationHttpException($errors, $exception);
         }
 
-        if ($skipValidation) {
-            return [$object];
-        }
+        return $object;
+    }
 
-        $this->validate($object, $validationGroups);
+    public function supports(ArgumentMetadata $argumentMetadata): bool
+    {
+        $attributes = $argumentMetadata->getAttributes(Content::class, ArgumentMetadata::IS_INSTANCEOF);
 
-        return [$object];
+        return count($attributes) > 0;
     }
 }
