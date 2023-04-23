@@ -8,6 +8,7 @@ use RequestObjectResolverBundle\Attribute\Path;
 use RequestObjectResolverBundle\Attribute\Query;
 use RequestObjectResolverBundle\Chain\ChainManager;
 use RequestObjectResolverBundle\Chain\ContentResolver;
+use RequestObjectResolverBundle\Chain\FormResolver;
 use RequestObjectResolverBundle\Chain\PathResolver;
 use RequestObjectResolverBundle\Chain\QueryResolver;
 use RequestObjectResolverBundle\Resolver\ObjectResolver;
@@ -79,6 +80,12 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             service('serializer'),
         ])
         ->tag('request_object.resolver', ['priority' => 0]);
+
+    $services->set(FormResolver::class)
+        ->args([
+            service('serializer'),
+        ])
+        ->tag('request_object.resolver', ['priority' => 10]);
 
     $services->set(PathResolver::class)
         ->args([

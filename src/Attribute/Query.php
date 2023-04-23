@@ -8,7 +8,7 @@ final class Query implements RequestAttribute
     /**
      * @param array<string, string> $map
      */
-    public function __construct(private array $map = [])
+    public function __construct(private array $map = [], private array $serializerContext = [])
     {
     }
 
@@ -18,5 +18,13 @@ final class Query implements RequestAttribute
     public function getMap(): array
     {
         return $this->map;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getSerializerContext(): array
+    {
+        return $this->serializerContext;
     }
 }

@@ -2,8 +2,9 @@
 
 namespace RequestObjectResolverBundle\Chain;
 
-use RequestObjectResolverBundle\Attribute\Content;
+use RequestObjectResolverBundle\Attribute\RequestAttribute;
 use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
+use RequestObjectResolverBundle\Exceptions\SerializerNotFound;
 use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -14,12 +15,19 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-final class ContentResolver implements ResolverInterface
+abstract class AbstractResolver implements ResolverInterface
 {
     protected array $defaultContext = [
         AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
         DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
     ];
+
+    protected array $data = [];
+
+    /**
+     * @var class-string<RequestAttribute>
+     */
+    protected string $attributeClassName;
 
     public function __construct(private SerializerInterface $serializer)
     {
@@ -27,37 +35,31 @@ final class ContentResolver implements ResolverInterface
 
     public function resolve(Request $request, ArgumentMetadata $metadata, ?object $object = null): ?object
     {
+        if (!$this->serializer instanceof Serializer) {
+            throw new SerializerNotFound();
+        }
+
         $type = $metadata->getType();
-        $format = null;
+        $data = $this->data;
         $fieldsMapping = [];
 
         $attributes = $metadata->getAttributes();
         $context = [];
         foreach ($attributes as $attribute) {
-            if ($attribute instanceof Content) {
+            if ($attribute instanceof $this->attributeClassName) {
+                /** @var RequestAttribute $attribute */
                 $fieldsMapping = array_merge_recursive($fieldsMapping, $attribute->getMap());
                 $context = array_merge_recursive($this->defaultContext, $attribute->getSerializerContext());
-                if (null === $format) {
-                    $format = $attribute->getFormat();
-                }
             }
         }
 
-        $content = $request->getContent();
-        if (count($fieldsMapping) > 0 && $this->serializer instanceof Serializer) {
-            $decoded = $this->serializer->decode($content, $format, $context);
-            if (is_array($decoded)) {
-                foreach ($decoded as $name => $value) {
-                    if (!\array_key_exists($name, $fieldsMapping)) {
-                        continue;
-                    }
-
-                    $decoded[$fieldsMapping[$name]] = $value;
-                    unset($decoded[$name]);
+        if (count($fieldsMapping) > 0) {
+            foreach ($data as $name => $value) {
+                if (array_key_exists($name, $fieldsMapping)) {
+                    $data[$fieldsMapping[$name]] = $value;
+                    unset($data[$name]);
                 }
             }
-
-            $content = $this->serializer->encode($decoded, $format, $context);
         }
 
         if (null !== $object) {
@@ -65,7 +67,11 @@ final class ContentResolver implements ResolverInterface
         }
 
         try {
-            $object = $this->serializer->deserialize($content, $type, $format, $context);
+            $object = $this->serializer->denormalize(
+                data: $data,
+                type: $type,
+                context: $context
+            );
         } catch (\TypeError $error) {
             if (preg_match(
                 '/^Cannot assign (\S+) to property \S+::\$(\S+) of type (\S+)$/',
@@ -93,7 +99,7 @@ final class ContentResolver implements ResolverInterface
 
     public function supports(ArgumentMetadata $argumentMetadata): bool
     {
-        $attributes = $argumentMetadata->getAttributes(Content::class, ArgumentMetadata::IS_INSTANCEOF);
+        $attributes = $argumentMetadata->getAttributes($this->attributeClassName, ArgumentMetadata::IS_INSTANCEOF);
 
         return count($attributes) > 0;
     }

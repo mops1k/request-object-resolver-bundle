@@ -8,7 +8,7 @@ Bundle can deserialize:
 - route parameters (attribute `RequestObjectResolverBundle\Attribute\Path`)
 - query parameters (attribute `RequestObjectResolverBundle\Attribute\Query`)
 - content body (supports all symfony serializer formats)  (attribute `RequestObjectResolverBundle\Attribute\Content`)
-- form parameters
+- form parameters (attribute `RequestObjectResolverBundle\Attribute\Form`)
 - uploaded files
 
 ## Install
@@ -186,6 +186,54 @@ class ExampleController extends AbstractController
 {
     #[Route('/{id}', methods: [Request::METHOD_POST])]
     public function __invoke(#[Query, Path, ValidationGroups(groups: 'default')] ExampleRequest $exampleRequest): JsonResponse
+    {
+        // some logic with $exampleRequest
+        
+        return new JsonResponse([
+            'id' => $exampleRequest->id,
+            'name' => $exampleRequest->name,
+        ]);
+    }
+}
+```
+
+## Serialization context
+If you want to add some serialization context, then in attributes you can set `serializationContext` property.
+
+Example:
+
+```php
+<?php
+
+use RequestObjectResolverBundle\Attribute\Query;
+use RequestObjectResolverBundle\Attribute\Path;
+use RequestObjectResolverBundle\Attribute\ValidationGroups;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
+class ExampleRequest
+{
+    #[Assert\NotNull]
+    #[Assert\GreaterThan(0)]
+    #[Groups(['default'])]
+    public ?int $id = null;
+    
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    public ?string $name = null;
+}
+
+/**
+ * Request path example: /25?name=Julian
+ */
+class ExampleController extends AbstractController
+{
+    #[Route('/{id}', methods: [Request::METHOD_POST])]
+    public function __invoke(#[Query(serializerContext: ['groups': ['default']]), Path] ExampleRequest $exampleRequest): JsonResponse
     {
         // some logic with $exampleRequest
         

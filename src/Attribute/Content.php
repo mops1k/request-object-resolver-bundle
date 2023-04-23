@@ -9,9 +9,13 @@ final class Content implements RequestAttribute
 {
     /**
      * @param array<string, string> $map
+     * @param array<string, string> $serializerContext
      */
-    public function __construct(private array $map = [], private string $format = JsonEncoder::FORMAT)
-    {
+    public function __construct(
+        private array $map = [],
+        private array $serializerContext = [],
+        private string $format = JsonEncoder::FORMAT,
+    ) {
     }
 
     /**
@@ -20,6 +24,14 @@ final class Content implements RequestAttribute
     public function getMap(): array
     {
         return $this->map;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getSerializerContext(): array
+    {
+        return $this->serializerContext;
     }
 
     public function getFormat(): string
