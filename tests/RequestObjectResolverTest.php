@@ -3,7 +3,6 @@
 namespace RequestObjectResolverBundle\Tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use PHPUnit\Framework\Attributes\DataProvider;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
 use RequestObjectResolverBundle\Exceptions\ObjectValidationFailHttpException;
@@ -64,7 +63,9 @@ class RequestObjectResolverTest extends KernelTestCase
         $reflection->setValue($this->resolver, $this->dispatcher);
     }
 
-    #[DataProvider('requestResolveSuccessParametersProvider')]
+    /**
+     * @dataProvider requestResolveSuccessParametersProvider
+     */
     public function testRequestResolveSuccess(mixed $parameter, string $expectedValue): void
     {
         $arguments = new ArgumentMetadata('test', TestRequestModel::class, false, false, null);
@@ -218,7 +219,9 @@ class RequestObjectResolverTest extends KernelTestCase
         $resolverResult->next();
     }
 
-    #[DataProvider('requestResolveFailParametersProvider')]
+    /**
+     * @dataProvider requestResolveFailParametersProvider
+     */
     public function testRequestResolveFail(mixed $parameter, string $expectedExceptionMessage): void
     {
         $arguments = new ArgumentMetadata('test', TestRequestModel::class, false, false, null);
