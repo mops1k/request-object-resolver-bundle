@@ -2,7 +2,7 @@
 
 namespace RequestObjectResolverBundle\Tests;
 
-use RequestObjectResolverBundle\Exceptions\RequestHeadersValidationFailHttpException;
+use RequestObjectResolverBundle\Exceptions\HeadersValidationFailHttpException;
 use RequestObjectResolverBundle\Http\RequestCookies;
 use RequestObjectResolverBundle\Http\RequestHeaders;
 use RequestObjectResolverBundle\Resolver\RequestHeadersResolver;
@@ -83,7 +83,7 @@ class RequestHeadersResolverTest extends KernelTestCase
 
         static::assertTrue($this->resolver->supports($request, $arguments));
 
-        $this->expectException(RequestHeadersValidationFailHttpException::class);
+        $this->expectException(HeadersValidationFailHttpException::class);
         $resolverResult = $this->resolver->resolve($request, $arguments);
         $resolverResult->current();
     }

@@ -6,7 +6,7 @@ use Generator;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectValidationEvent;
 use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
-use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
+use RequestObjectResolverBundle\Exceptions\ObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
 use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
@@ -87,7 +87,7 @@ final class RequestObjectResolver implements ArgumentValueResolverInterface
                     groups: $groups
                 );
                 if (count($constraints) > 0) {
-                    throw new RequestObjectValidationFailHttpException($constraints);
+                    throw new ObjectValidationFailHttpException($constraints);
                 }
             }
 

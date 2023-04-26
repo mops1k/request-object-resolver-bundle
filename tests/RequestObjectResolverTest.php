@@ -6,7 +6,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RequestObjectResolverBundle\EventDispatcher\BeforeRequestObjectDeserializeEvent;
 use RequestObjectResolverBundle\Exceptions\ObjectDeserializationHttpException;
-use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
+use RequestObjectResolverBundle\Exceptions\ObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use RequestObjectResolverBundle\NonAutoValidatedRequestModelInterface;
 use RequestObjectResolverBundle\RequestModelInterface;
@@ -147,7 +147,7 @@ class RequestObjectResolverTest extends KernelTestCase
             $resolverResult = $this->resolver->resolve($request, $arguments);
             $resolverResult->current();
             static::fail('Expected exception not thrown.');
-        } catch (RequestObjectValidationFailHttpException $e) {
+        } catch (ObjectValidationFailHttpException $e) {
             static::assertCount(1, $e->getErrors());
             static::assertEquals(400, $e->getStatusCode());
             static::assertStringContainsString('Request validation failed.', $e->getMessage());
@@ -234,7 +234,7 @@ class RequestObjectResolverTest extends KernelTestCase
             $resolverResult = $this->resolver->resolve($request, $arguments);
             $resolverResult->current();
             static::fail('Expected exception not thrown.');
-        } catch (RequestObjectValidationFailHttpException $e) {
+        } catch (ObjectValidationFailHttpException $e) {
             static::assertCount(2, $e->getErrors());
             static::assertEquals(400, $e->getStatusCode());
             static::assertStringContainsString($expectedExceptionMessage, $e->getMessage());

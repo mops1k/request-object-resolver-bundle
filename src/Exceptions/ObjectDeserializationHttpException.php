@@ -4,7 +4,7 @@ namespace RequestObjectResolverBundle\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ObjectDeserializationHttpException extends BadRequestHttpException
+final class ObjectDeserializationHttpException extends BadRequestHttpException
 {
     /**
      * @param array<string> $errors

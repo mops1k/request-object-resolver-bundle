@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class RequestObjectValidationFailHttpException extends BadRequestHttpException
+class ObjectValidationFailHttpException extends BadRequestHttpException
 {
     /**
      * @var array<array{field: string, message: string}>

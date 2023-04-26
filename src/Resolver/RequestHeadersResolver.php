@@ -2,7 +2,7 @@
 
 namespace RequestObjectResolverBundle\Resolver;
 
-use RequestObjectResolverBundle\Exceptions\RequestHeadersValidationFailHttpException;
+use RequestObjectResolverBundle\Exceptions\HeadersValidationFailHttpException;
 use RequestObjectResolverBundle\Helper\RequestNormalizeHelper;
 use RequestObjectResolverBundle\Http\RequestHeaders;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +35,7 @@ final class RequestHeadersResolver implements ArgumentValueResolverInterface
 
         $constraints = $this->validator->validate($result);
         if (count($constraints) > 0) {
-            throw new RequestHeadersValidationFailHttpException($constraints);
+            throw new HeadersValidationFailHttpException($constraints);
         }
 
         yield $result;

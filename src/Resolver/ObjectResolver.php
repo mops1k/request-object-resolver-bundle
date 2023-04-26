@@ -6,7 +6,7 @@ use RequestObjectResolverBundle\Attribute\RequestAttribute;
 use RequestObjectResolverBundle\Attribute\SkipValidation;
 use RequestObjectResolverBundle\Attribute\ValidationGroups;
 use RequestObjectResolverBundle\Chain\ChainManager;
-use RequestObjectResolverBundle\Exceptions\RequestObjectValidationFailHttpException;
+use RequestObjectResolverBundle\Exceptions\ObjectValidationFailHttpException;
 use RequestObjectResolverBundle\Exceptions\TypeDoesNotExists;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\Request;
@@ -109,7 +109,7 @@ final class ObjectResolver implements ArgumentValueResolverInterface
         );
 
         if (count($constraints) > 0) {
-            throw new RequestObjectValidationFailHttpException($constraints);
+            throw new ObjectValidationFailHttpException($constraints);
         }
     }
 }
