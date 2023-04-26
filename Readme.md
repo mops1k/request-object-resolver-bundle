@@ -290,3 +290,16 @@ class ExampleController extends AbstractController
     }
 }
 ```
+
+## Overriding values with request parts combination
+These are table of request parts priority overriding (if have same key name):
+
+Request part|Priority (lower value = higher priority)
+------------|----------------------------------------
+Path|30
+Query|20
+Form|10
+Content|0
+
+Example. If you handle `Path`, `Query` and `Content` in same object and all of them have same field (id for example),
+then resulting field value will be from `Form` request part.
