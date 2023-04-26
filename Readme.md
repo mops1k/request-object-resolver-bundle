@@ -296,8 +296,8 @@ These are table of request parts priority overriding (if have same key name):
 
 Request part|Priority (lower value = higher priority)
 ------------|----------------------------------------
-Path|30
-Query|20
+Query|30
+Path|20
 Form|10
 Content|0
 
