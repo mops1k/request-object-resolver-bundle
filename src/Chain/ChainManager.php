@@ -2,7 +2,7 @@
 
 namespace RequestObjectResolverBundle\Chain;
 
-use RequestObjectResolverBundle\Attribute\SerializationContext;
+use RequestObjectResolverBundle\Attribute\SerializerContext;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -32,10 +32,10 @@ final class ChainManager
     public function resolve(Request $request, ArgumentMetadata $argumentMetadata): ?object
     {
         $options = [];
-        /** @var SerializationContext $attribute */
+        /** @var SerializerContext $attribute */
         foreach (
             $argumentMetadata->getAttributes(
-                SerializationContext::class
+                SerializerContext::class
             ) as $attribute
         ) {
             $options['serializationContext'] = array_merge_recursive(

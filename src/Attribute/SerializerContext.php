@@ -3,7 +3,7 @@
 namespace RequestObjectResolverBundle\Attribute;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-final class SerializationContext
+final class SerializerContext
 {
     /**
      * @param array<string, mixed> $context

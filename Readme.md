@@ -239,21 +239,21 @@ class ExampleController extends AbstractController
         
         return new JsonResponse([
             'id' => $exampleRequest->id,
-            'name' => $exampleRequest->name,
+            'name' => $exampleRequest->name, // will throw error as uninitialized property
         ]);
     }
 }
 ```
 
-If you want to set context to all request parts which you want to deserialize to DTO,
-use `\RequestObjectResolverBundle\Attribute\SerializationContext` attribute.
+If you want to set context to all request parts which you want to deserialize to object,
+use `\RequestObjectResolverBundle\Attribute\SerializerContext` attribute.
 
 ```php
 <?php
 
 use RequestObjectResolverBundle\Attribute\Query;
 use RequestObjectResolverBundle\Attribute\Path;
-use RequestObjectResolverBundle\Attribute\SerializationContext;
+use RequestObjectResolverBundle\Attribute\SerializerContext;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -279,13 +279,13 @@ class ExampleRequest
 class ExampleController extends AbstractController
 {
     #[Route('/{id}', methods: [Request::METHOD_POST])]
-    public function __invoke(#[Query, Path, SerializationContext(['groups': ['default']])] ExampleRequest $exampleRequest): JsonResponse
+    public function __invoke(#[Query, Path, SerializerContext(['groups': ['default']])] ExampleRequest $exampleRequest): JsonResponse
     {
         // some logic with $exampleRequest
         
         return new JsonResponse([
             'id' => $exampleRequest->id,
-            'name' => $exampleRequest->name,
+            'name' => $exampleRequest->name, // will throw error as uninitialized property
         ]);
     }
 }
