@@ -7,7 +7,7 @@ final class Path implements RequestAttribute
 {
     /**
      * @param array<string, string> $map
-     * @param array<string, string> $serializerContext
+     * @param array<string, mixed> $serializerContext
      */
     public function __construct(private array $map = [], private array $serializerContext = [])
     {
@@ -22,7 +22,7 @@ final class Path implements RequestAttribute
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function getSerializerContext(): array
     {

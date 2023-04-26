@@ -7,7 +7,15 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 interface ResolverInterface
 {
-    public function resolve(Request $request, ArgumentMetadata $metadata, ?object $object = null): ?object;
+    /**
+     * @param array<string, string> $options
+     */
+    public function resolve(
+        Request $request,
+        ArgumentMetadata $metadata,
+        ?object $object = null,
+        array $options = [],
+    ): ?object;
 
     public function supports(ArgumentMetadata $argumentMetadata): bool;
 }

@@ -9,7 +9,7 @@ Bundle can deserialize:
 - query parameters (attribute `RequestObjectResolverBundle\Attribute\Query`)
 - content body (supports all symfony serializer formats)  (attribute `RequestObjectResolverBundle\Attribute\Content`)
 - form parameters (attribute `RequestObjectResolverBundle\Attribute\Form`)
-- uploaded files
+- uploaded files (attribute `RequestObjectResolverBundle\Attribute\Form`)
 
 ## Install
 ```bash
@@ -234,6 +234,52 @@ class ExampleController extends AbstractController
 {
     #[Route('/{id}', methods: [Request::METHOD_POST])]
     public function __invoke(#[Query(serializerContext: ['groups': ['default']]), Path] ExampleRequest $exampleRequest): JsonResponse
+    {
+        // some logic with $exampleRequest
+        
+        return new JsonResponse([
+            'id' => $exampleRequest->id,
+            'name' => $exampleRequest->name,
+        ]);
+    }
+}
+```
+
+If you want to set context to all request parts which you want to deserialize to DTO,
+use `\RequestObjectResolverBundle\Attribute\SerializationContext` attribute.
+
+```php
+<?php
+
+use RequestObjectResolverBundle\Attribute\Query;
+use RequestObjectResolverBundle\Attribute\Path;
+use RequestObjectResolverBundle\Attribute\SerializationContext;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
+class ExampleRequest
+{
+    #[Assert\NotNull]
+    #[Assert\GreaterThan(0)]
+    #[Groups(['default'])]
+    public ?int $id = null;
+    
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    public ?string $name = null;
+}
+
+/**
+ * Request path example: /25?name=Julian
+ */
+class ExampleController extends AbstractController
+{
+    #[Route('/{id}', methods: [Request::METHOD_POST])]
+    public function __invoke(#[Query, Path, SerializationContext(['groups': ['default']])] ExampleRequest $exampleRequest): JsonResponse
     {
         // some logic with $exampleRequest
         

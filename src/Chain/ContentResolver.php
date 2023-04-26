@@ -16,6 +16,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class ContentResolver implements ResolverInterface
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $defaultContext = [
         AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
         DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
@@ -25,18 +28,30 @@ final class ContentResolver implements ResolverInterface
     {
     }
 
-    public function resolve(Request $request, ArgumentMetadata $metadata, ?object $object = null): ?object
-    {
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function resolve(
+        Request $request,
+        ArgumentMetadata $metadata,
+        ?object $object = null,
+        array $options = [],
+    ): ?object {
         $type = $metadata->getType();
         $format = null;
         $fieldsMapping = [];
 
         $attributes = $metadata->getAttributes();
-        $context = [];
+        $context = $this->defaultContext;
+
+        if (isset($options['serializationContext'])) {
+            $context = array_merge_recursive($context, $options['serializationContext']);
+        }
+
         foreach ($attributes as $attribute) {
             if ($attribute instanceof Content) {
                 $fieldsMapping = array_merge_recursive($fieldsMapping, $attribute->getMap());
-                $context = array_merge_recursive($this->defaultContext, $attribute->getSerializerContext());
+                $context = array_merge_recursive($context, $attribute->getSerializerContext());
                 if (null === $format) {
                     $format = $attribute->getFormat();
                 }

@@ -10,10 +10,17 @@ final class FormResolver extends AbstractResolver
 {
     protected string $attributeClassName = Form::class;
 
-    public function resolve(Request $request, ArgumentMetadata $metadata, ?object $object = null): ?object
-    {
-        $this->data = $request->request->all();
+    /**
+     * @param array<string, string> $options
+     */
+    public function resolve(
+        Request $request,
+        ArgumentMetadata $metadata,
+        ?object $object = null,
+        array $options = [],
+    ): ?object {
+        $this->data = \array_merge_recursive($request->request->all(), $request->files->all());
 
-        return parent::resolve($request, $metadata, $object);
+        return parent::resolve($request, $metadata, $object, $options);
     }
 }

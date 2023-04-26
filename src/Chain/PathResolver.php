@@ -10,10 +10,17 @@ final class PathResolver extends AbstractResolver
 {
     protected string $attributeClassName = Path::class;
 
-    public function resolve(Request $request, ArgumentMetadata $metadata, ?object $object = null): ?object
-    {
+    /**
+     * @param array<string, string> $options
+     */
+    public function resolve(
+        Request $request,
+        ArgumentMetadata $metadata,
+        ?object $object = null,
+        array $options = [],
+    ): ?object {
         $this->data = $request->attributes->get('_route_params', []);
 
-        return parent::resolve($request, $metadata, $object);
+        return parent::resolve($request, $metadata, $object, $options);
     }
 }

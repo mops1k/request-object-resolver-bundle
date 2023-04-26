@@ -8,6 +8,7 @@ use RequestObjectResolverBundle\Exceptions\SerializerNotFound;
 use RequestObjectResolverBundle\Exceptions\TypeErrorHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\PartialDenormalizationException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
@@ -17,11 +18,17 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 abstract class AbstractResolver implements ResolverInterface
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $defaultContext = [
         AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
         DenormalizerInterface::COLLECT_DENORMALIZATION_ERRORS => true,
     ];
 
+    /**
+     * @var array<mixed>
+     */
     protected array $data = [];
 
     /**
@@ -33,8 +40,17 @@ abstract class AbstractResolver implements ResolverInterface
     {
     }
 
-    public function resolve(Request $request, ArgumentMetadata $metadata, ?object $object = null): ?object
-    {
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @throws ExceptionInterface
+     */
+    public function resolve(
+        Request $request,
+        ArgumentMetadata $metadata,
+        ?object $object = null,
+        array $options = [],
+    ): ?object {
         if (!$this->serializer instanceof Serializer) {
             throw new SerializerNotFound();
         }
@@ -44,12 +60,17 @@ abstract class AbstractResolver implements ResolverInterface
         $fieldsMapping = [];
 
         $attributes = $metadata->getAttributes();
-        $context = [];
+        $context = $this->defaultContext;
+
+        if (isset($options['serializationContext'])) {
+            $context = array_merge_recursive($context, $options['serializationContext']);
+        }
+
         foreach ($attributes as $attribute) {
             if ($attribute instanceof $this->attributeClassName) {
                 /** @var RequestAttribute $attribute */
                 $fieldsMapping = array_merge_recursive($fieldsMapping, $attribute->getMap());
-                $context = array_merge_recursive($this->defaultContext, $attribute->getSerializerContext());
+                $context = array_merge_recursive($context, $attribute->getSerializerContext());
             }
         }
 

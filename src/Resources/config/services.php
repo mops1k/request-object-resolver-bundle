@@ -15,6 +15,7 @@ use RequestObjectResolverBundle\Resolver\ObjectResolver;
 use RequestObjectResolverBundle\Resolver\RequestCookiesResolver;
 use RequestObjectResolverBundle\Resolver\RequestHeadersResolver;
 use RequestObjectResolverBundle\Resolver\RequestObjectResolver;
+use RequestObjectResolverBundle\Serializer\UploadedFileDenormalizer;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -114,5 +115,12 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         ->tag('controller.argument_value_resolver', [
             'priority' => 50,
         ])
+    ;
+
+    $services->set(UploadedFileDenormalizer::class)
+        ->autowire()
+        ->autoconfigure()
+        ->call('setSerializer', [service('serializer')])
+        ->tag('serializer.normalizer')
     ;
 };
