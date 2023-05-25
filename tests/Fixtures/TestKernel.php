@@ -21,7 +21,12 @@ class TestKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load(function (ContainerBuilder $container) {
-            $container->prependExtensionConfig('framework', ['test' => true]);
+            $container->prependExtensionConfig('framework', [
+                'test' => true,
+                'serializer' => [
+                    'enabled' => true,
+                ],
+            ]);
         });
     }
 }
