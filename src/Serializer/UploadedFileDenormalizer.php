@@ -3,15 +3,10 @@
 namespace RequestObjectResolverBundle\Serializer;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class UploadedFileDenormalizer extends ObjectNormalizer
+class UploadedFileDenormalizer implements DenormalizerInterface
 {
-    public function supportsNormalization(mixed $data, string $format = null): bool
-    {
-        return false;
-    }
-
     public function supportsDenormalization(mixed $data, string $type, string $format = null): bool
     {
         if ($type === UploadedFile::class && $data instanceof UploadedFile) {
@@ -27,5 +22,15 @@ class UploadedFileDenormalizer extends ObjectNormalizer
     public function denormalize(mixed $data, string $type, string $format = null, array $context = []): ?UploadedFile
     {
         return $data;
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            UploadedFile::class => false,
+        ];
     }
 }

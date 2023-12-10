@@ -24,47 +24,6 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_it
 return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
-    $services->set(RequestHeadersResolver::class)
-             ->deprecate(
-                 'mops1k/request-object-resolver-bundle',
-                 '1.1.0',
-                 'Service %service_id% is depreceted and will be removed in next minor version'
-             )
-             ->args([
-                        service('validator'),
-                    ])
-             ->tag('controller.argument_value_resolver', [
-                 'priority' => 100,
-             ])
-    ;
-
-    $services->set(RequestCookiesResolver::class)
-             ->deprecate(
-                 'mops1k/request-object-resolver-bundle',
-                 '1.1.0',
-                 'Service %service_id% is depreceted and will be removed in next minor version'
-             )
-             ->tag('controller.argument_value_resolver', [
-                 'priority' => 100,
-             ])
-    ;
-
-    $services->set(RequestObjectResolver::class)
-             ->deprecate(
-                 'mops1k/request-object-resolver-bundle',
-                 '1.1.0',
-                 'Service %service_id% is depreceted and will be removed in next minor version'
-             )
-             ->args([
-                        service('serializer'),
-                        service('validator'),
-                        service('event_dispatcher'),
-                    ])
-             ->tag('controller.argument_value_resolver', [
-                 'priority' => 100,
-             ])
-    ;
-
     // default attributes which can be handled by resolver
     $services->set(Path::class)
         ->tag('request_object.attribute');
@@ -118,9 +77,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     ;
 
     $services->set(UploadedFileDenormalizer::class)
-        ->autowire()
-        ->autoconfigure()
-        ->call('setSerializer', [service('serializer')])
         ->tag('serializer.normalizer')
     ;
 };

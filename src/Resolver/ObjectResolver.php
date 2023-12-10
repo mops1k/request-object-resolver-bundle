@@ -11,11 +11,12 @@ use RequestObjectResolverBundle\Exceptions\TypeDoesNotExists;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ObjectResolver implements ArgumentValueResolverInterface
+final class ObjectResolver implements ArgumentValueResolverInterface, ValueResolverInterface
 {
     /**
      * @var iterable<class-string<RequestAttribute>>
@@ -65,6 +66,10 @@ final class ObjectResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
+        if (!$this->supports($request, $argument)) {
+            return null;
+        }
+
         $type = $argument->getType();
         if (null === $type || !class_exists($type)) {
             throw new TypeDoesNotExists();

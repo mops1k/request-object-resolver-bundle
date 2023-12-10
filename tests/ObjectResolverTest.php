@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RequestObjectResolverBundle\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use RequestObjectResolverBundle\Attribute\Content;
 use RequestObjectResolverBundle\Attribute\Form;
 use RequestObjectResolverBundle\Attribute\Path;
@@ -38,9 +39,8 @@ class ObjectResolverTest extends KernelTestCase
 
     /**
      * @param callable(object): void $testCallable
-     *
-     * @dataProvider successProvider
      */
+    #[DataProvider('successProvider')]
     public function testSuccess(ArgumentMetadata $argument, Request $request, callable $testCallable): void
     {
         self::assertTrue($this->resolver->supports($request, $argument));
@@ -51,7 +51,7 @@ class ObjectResolverTest extends KernelTestCase
         $testCallable($result->current());
     }
 
-    public function successProvider(): \Generator
+    public static function successProvider(): \Generator
     {
         yield 'Query Test' => [
             'argument' => new ArgumentMetadata(
