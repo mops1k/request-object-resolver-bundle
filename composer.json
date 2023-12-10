@@ -3,7 +3,7 @@
   "description": "Bundle for resolving and validate http request to object",
   "type": "symfony-bundle",
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.1",
     "doctrine/inflector": "^2.0",
     "symfony/framework-bundle": "^5.4|^6.0",
     "symfony/property-access": "^5.4|^6.0",
