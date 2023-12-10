@@ -26,7 +26,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
     - name: Install Dependencies
-      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-lower
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-lowest
     - name: Execute phpstan checks
       run: vendor/bin/phpstan --memory-limit=-1 --no-progress
     - name: Execute ecs checks
