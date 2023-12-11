@@ -20,11 +20,12 @@ use RequestObjectResolverBundle\Tests\Fixtures\TestKernel;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver\TraceableValueResolver;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 class ObjectResolverTest extends KernelTestCase
 {
-    private ?ObjectResolver $resolver;
+    private ObjectResolver|TraceableValueResolver|null $resolver;
 
     protected static function getKernelClass(): string
     {

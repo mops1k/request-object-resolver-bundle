@@ -11,12 +11,11 @@ use RequestObjectResolverBundle\Exceptions\TypeDoesNotExists;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
-use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ObjectResolver implements ArgumentValueResolverInterface, ValueResolverInterface
+final class ObjectResolver implements ArgumentValueResolverInterface
 {
     /**
      * @var iterable<class-string<RequestAttribute>>
