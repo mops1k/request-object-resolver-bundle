@@ -18,7 +18,7 @@
     "phpunit/php-code-coverage": "^10.1",
     "phpunit/phpunit": "^10.5",
     "roave/security-advisories": "dev-latest",
-    "symplify/easy-coding-standard": "^11.3",
+    "symplify/easy-coding-standard": "^11.5",
     "symplify/config-transformer": "^12.0"
   },
   "autoload": {
