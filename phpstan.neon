@@ -7,16 +7,6 @@ rules:
     - PHPStan\Rules\DisallowedConstructs\DisallowedImplicitArrayCreationRule
     - PHPStan\Rules\ForeachLoop\OverwriteVariablesWithForeachRule
     - PHPStan\Rules\Methods\WrongCaseOfInheritedMethodRule
-    - PHPStan\Rules\Operators\OperandInArithmeticPostDecrementRule
-    - PHPStan\Rules\Operators\OperandInArithmeticPostIncrementRule
-    - PHPStan\Rules\Operators\OperandInArithmeticPreDecrementRule
-    - PHPStan\Rules\Operators\OperandInArithmeticPreIncrementRule
-    - PHPStan\Rules\Operators\OperandsInArithmeticAdditionRule
-    - PHPStan\Rules\Operators\OperandsInArithmeticDivisionRule
-    - PHPStan\Rules\Operators\OperandsInArithmeticExponentiationRule
-    - PHPStan\Rules\Operators\OperandsInArithmeticModuloRule
-    - PHPStan\Rules\Operators\OperandsInArithmeticMultiplicationRule
-    - PHPStan\Rules\Operators\OperandsInArithmeticSubtractionRule
     - PHPStan\Rules\StrictCalls\DynamicCallOnStaticMethodsRule
     - PHPStan\Rules\StrictCalls\StrictFunctionCallsRule
     - PHPStan\Rules\SwitchConditions\MatchingTypeInSwitchCaseConditionRule
@@ -24,8 +14,6 @@ rules:
     - PHPStan\Rules\VariableVariables\VariableStaticMethodCallRule
     - PHPStan\Rules\VariableVariables\VariableStaticPropertyFetchRule
     - PHPStan\Rules\VariableVariables\VariableVariablesRule
-#    - App\PhpStan\CatchThrowableInspection
-#    - App\PhpStan\InsaneComparisonRule
 services:
     - PHPStan\Rules\Operators\OperatorRuleHelper
 parameters:
@@ -56,3 +44,4 @@ parameters:
     ignoreErrors:
         - path: ecs.php
           message: '#Class PhpCsFixer\\.+ not found#'
+        - '#Dead catch - [a-zA-Z0-9\\_]+ is never thrown in the try block.#'
