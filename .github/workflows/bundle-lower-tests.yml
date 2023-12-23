@@ -39,11 +39,11 @@ jobs:
         bootstrap: vendor/autoload.php
         configuration: phpunit.xml.dist
         php_extensions: xdebug
-        coverage_clover: coverage/clover.xml
+        coverage_clover: ./coverage/clover.xml
     - name: Upload to Codecov
       uses: codecov/codecov-action@v2
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
-        files: ./coverage.xml
+        files: ./coverage/clover.xml
         verbose: true
