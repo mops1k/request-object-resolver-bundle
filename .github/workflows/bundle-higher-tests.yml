@@ -31,5 +31,12 @@ jobs:
       run: vendor/bin/phpstan --memory-limit=-1 --no-progress
     - name: Execute ecs checks
       run: vendor/bin/ecs --no-error-table --no-progress-bar
-    - name: Execute PHPUnit tests
-      run: vendor/bin/phpunit
+    - name: PHPUnit Tests
+      uses: php-actions/phpunit@v3
+      env:
+        XDEBUG_MODE: coverage
+      with:
+        bootstrap: vendor/autoload.php
+        configuration: phpunit.xml.dist
+        php_extensions: xdebug
+        coverage_clover: coverage/clover.xml
