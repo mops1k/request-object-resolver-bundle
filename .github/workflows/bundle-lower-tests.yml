@@ -40,3 +40,8 @@ jobs:
         configuration: phpunit.xml.dist
         php_extensions: xdebug
         coverage_clover: coverage/clover.xml
+    - name: Upload to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        files: ./coverage.xml
+        verbose: true
